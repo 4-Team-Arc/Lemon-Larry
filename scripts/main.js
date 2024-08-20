@@ -9,7 +9,7 @@ document.body.appendChild(renderer.domElement);
 
 // Camera Setup
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
-camera.position.set(2, 2, 2);
+camera.position.set(1, 1, 1);
 camera.lookAt(0, 0, 0);
 
 // Controls setup
@@ -18,9 +18,25 @@ const controls = new OrbitControls(camera, renderer.domElement);
 // Scene setup
 const scene = new THREE.Scene();;
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x0080ff});
+const material = new THREE.MeshLambertMaterial({ color: 0x00d000});
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
+
+const setupLights = () => {
+
+  const sunLight = new THREE.DirectionalLight();
+  sunLight.position.set(1, 1, 1);
+  scene.add(sunLight);
+  
+  const moreSunLight = new THREE.DirectionalLight();
+  moreSunLight.position.set(-1, -1, -0.5);
+  scene.add(moreSunLight);
+
+  const ambient = new THREE.AmbientLight();
+  ambient.intensity = 0.2;
+  scene.add(ambient);
+
+}
 
 // Render Loop
 const animate = () => {
@@ -35,4 +51,5 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
+setupLights();
 animate();
