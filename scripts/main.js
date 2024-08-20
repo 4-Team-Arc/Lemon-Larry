@@ -5,25 +5,23 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x6cc0b8);
 document.body.appendChild(renderer.domElement);
 
 // Camera Setup
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
-camera.position.set(1, 1, 1);
-camera.lookAt(0, 0, 0);
+camera.position.set(-10, 5, -10);
 
 // Controls setup
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(10, 5, 10);
+controls.update();
 
 // Scene setup
 const scene = new THREE.Scene();;
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshLambertMaterial({ color: 0x00d000});
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
 
 const setupLights = () => {
-
+  
   const sunLight = new THREE.DirectionalLight();
   sunLight.position.set(1, 1, 1);
   scene.add(sunLight);
@@ -31,11 +29,25 @@ const setupLights = () => {
   const moreSunLight = new THREE.DirectionalLight();
   moreSunLight.position.set(-1, -1, -0.5);
   scene.add(moreSunLight);
-
+  
   const ambient = new THREE.AmbientLight();
   ambient.intensity = 0.2;
   scene.add(ambient);
+  
+}
 
+const setupFloor = (size) => {
+  
+  const geometry = new THREE.BoxGeometry();
+  const material = new THREE.MeshLambertMaterial({ color: 0x00d000});
+
+  for (let x = 0; x < size; x++) {
+      for (let z = 0; z < size; z++) {
+          const cube = new THREE.Mesh(geometry, material);
+          cube.position.set(x, -1, z); // Place the cube at y = -1 to act as the floor
+          scene.add(cube);
+      }
+  }
 }
 
 // Render Loop
@@ -52,4 +64,5 @@ window.addEventListener('resize', () => {
 })
 
 setupLights();
+setupFloor(25)
 animate();
