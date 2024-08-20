@@ -1,3 +1,6 @@
+import NavBar from "./components/navbar.jsx"
+import LoginPage from "./components/loginPage.jsx"
+import AboutUsPage from "./components/about-us.jsx"
 
 const App = () => {
 
