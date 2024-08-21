@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const prisma = require('./client.cjs');
 
 const createUser = async(username, password) =>{
@@ -9,6 +10,9 @@ const createUser = async(username, password) =>{
         password: hashedPassword
       }
     });
+
+
+
     return newUser
   } catch(error) {
     console.log(`Error creating user: `, error);
@@ -26,7 +30,7 @@ const getAllUsers = async() => {
 
 const getUserById = async(userId) => {
   try{
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findOne({
       where: { id: userId}
     });
     return user;
@@ -35,11 +39,11 @@ const getUserById = async(userId) => {
   }
 }
 
-const updateUser = async(userId, newUsername) => {
+const updateUser = async(userId) => {
   try{
     const updatedUser = await prisma.user.update({
       where: { id: userId},
-      data: { username: newUsername}
+      data: { username: 'Lemon Larry'}
     });
     console.log(`User updated: ${updatedUser.username}`)
   }catch(error) {
