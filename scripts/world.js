@@ -13,6 +13,7 @@ export class World extends THREE.Group {
     super();
     this.size = size;
     this.mazeLayout = mazeLayout;
+    this.sphereChance = .25;
   }
 
   setupWorld = () => {  
@@ -22,6 +23,15 @@ export class World extends THREE.Group {
     const mesh = new THREE.InstancedMesh(geometry, material, maxBlocks*2);
     const blackMesh = new THREE.InstancedMesh(geometry, blackMaterial, maxBlocks*2)
     const sphereMesh = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, maxBlocks*2)
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = true
+
+    blackMesh.castShadow = true;
+    blackMesh.receiveShadow = true
+
+    sphereMesh.castShadow = true;
+    sphereMesh.receiveShadow = true
 
     mesh.count = 0; 
     blackMesh.count = 0;
@@ -36,7 +46,7 @@ export class World extends THREE.Group {
         blackMesh.setMatrixAt(blackMesh.count++, matrix);  
     
         // Randomly scatter small spheres 
-        if (Math.random() < 0.2) { // 20% chance to place a sphere
+        if (Math.random() < this.sphereChance) { // 20% chance to place a sphere
           const sphereMatrix = new THREE.Matrix4();
           
           // Place the sphere at y = 1, above the floor
