@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { World } from './world'
+import { Player } from './player'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { createUI } from './ui'
 
@@ -16,11 +17,11 @@ renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 // Camera Setup
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
-camera.position.set(14, 30, 25);
+const orbitCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
+orbitCamera.position.set(14, 30, 25);
 
 // Controls setup
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(orbitCamera, renderer.domElement);
 controls.target.set(14, 0, 15);
 controls.update();
 
@@ -175,7 +176,7 @@ const world = new World({ width: 30, wallHeight: 3 }, mazes.maze3);
 world.setupWorld();
 scene.add(world);
 
-
+const player = new Player(scene);
 
 // Generate random Maze
 export const generateMaze = (makeNumMazes, mazes, world) => {
@@ -241,19 +242,30 @@ const setupLights = () => {
 
 
 // Render Loop
+let previousTime = performance.now();
+
 const animate = () => {
+
+  let currentTime = performance.now();
+  let changeInTime = (currentTime - previousTime) / 1000;
+
   requestAnimationFrame(animate);
-  renderer.render(scene, camera)
+  player.applyInputs(changeInTime)
+  renderer.render(scene, player.controls.isLocked ? player.camera : orbitCamera)
   stats.update();
+
+  previousTime = currentTime;
 }
 
-// Handles camera and scene when window is resized
+// Handles orbitCamera and scene when window is resized
 window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
+  orbitCamera.aspect = window.innerWidth / window.innerHeight;
+  orbitCamera.updateProjectionMatrix();
+  player.camera.aspect = window.innerWidth / window.innerHeight;
+  player.camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
 setupLights();
-createUI(world, sun);
+createUI(world, sun, player);
 animate();
