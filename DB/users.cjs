@@ -28,6 +28,17 @@ const getAllUsers = async() => {
   }
 }
 
+const getUserById = async(userId) => {
+  try{
+    const user = await prisma.user.findOne({
+      where: { id: userId}
+    });
+    return user;
+  }catch(error) {
+    console.log(`error while getUserById: `, error);
+  }
+}
+
 const updateUser = async(userId) => {
   try{
     const updatedUser = await prisma.user.update({
@@ -51,10 +62,10 @@ const deleteUser = async(userId) => {
   }
 }
 
-
-const test = async() => {
-  await deleteUser(9)
-  const newUser = await createUser();
-  await updateUser(newUser.id);
-  await prisma.$disconnect();
+module.exports = {
+  createUser,
+  getUserById,
+  getAllUsers,
+  updateUser,
+  deleteUser
 }
