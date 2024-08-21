@@ -2,8 +2,10 @@ import * as THREE from 'three';
 
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshLambertMaterial({ color: 0x00d000 });
-const blueMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+const blackMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
 
+const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); // Small sphere
+const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 }); // Red spheres
 
 
 export class World extends THREE.Group {
@@ -17,10 +19,13 @@ export class World extends THREE.Group {
     this.clear();  
     
     const maxBlocks = (this.size.width ** 2) * this.size.wallHeight;
-    const mesh = new THREE.InstancedMesh(geometry, material, maxBlocks);
-    const blueMesh = new THREE.InstancedMesh(geometry, blueMaterial, maxBlocks)
+    const mesh = new THREE.InstancedMesh(geometry, material, maxBlocks*2);
+    const blueMesh = new THREE.InstancedMesh(geometry, blackMaterial, maxBlocks*2)
+    const sphereMesh = new THREE.InstancedMesh(sphereGeometry, sphereMaterial, maxBlocks*2)
+
     mesh.count = 0; 
     blueMesh.count = 0;
+    sphereMesh.count = 0;
 
     const matrix = new THREE.Matrix4();  
     
@@ -30,17 +35,15 @@ export class World extends THREE.Group {
         matrix.setPosition(x, 0, z);  
         blueMesh.setMatrixAt(blueMesh.count++, matrix);  
     
-        // Randomly scatter small spheres (e.g., every 3 or 4 blocks)
+        // Randomly scatter small spheres 
         if (Math.random() < 0.2) { // 20% chance to place a sphere
-          const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); // Small sphere
-          const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 }); // Red spheres
-          const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    
           const sphereMatrix = new THREE.Matrix4();
-          sphereMatrix.setPosition(x, 1, z); // Place the sphere at y = 1, above the floor
+          
+          // Place the sphere at y = 1, above the floor
+          sphereMatrix.setPosition(x, 1, z); 
     
-          sphereMesh.applyMatrix4(sphereMatrix);
-          this.add(sphereMesh); // Add the sphere directly to the world
+          // Add the matrix to the instanced mesh
+          sphereMesh.setMatrixAt(sphereMesh.count++, sphereMatrix); 
         }
       }
     }
@@ -71,13 +74,12 @@ export class World extends THREE.Group {
       }
     }
 
-    // TODO add spheres to the maze
-
     // Maze creation
     this.createMaze(mesh, matrix);
 
     this.add(mesh);
-    this.add(blueMesh)  ;
+    this.add(blueMesh);
+    this.add(sphereMesh);
    
   }
 

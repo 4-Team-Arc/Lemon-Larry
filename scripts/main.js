@@ -157,18 +157,21 @@ maze4: []
 
 // Scene setup
 const scene = new THREE.Scene();;
-const world = new World({ width: 30, wallHeight: 3 }, mazes.maze1);
+const world = new World({ width: 30, wallHeight: 3 }, mazes.maze3);
 world.setupWorld();
 scene.add(world);
 
+
+
 // Generate random Maze
-const generateMaze = (makeNumMazes, mazes) => {
-  const onesArray = new Array(30).fill(1);
+export const generateMaze = (makeNumMazes, mazes, world) => {
+  const width = world.size.width;
+  const onesArray = new Array(width).fill(1);
 
   for (let i = 1; i <= makeNumMazes; i++) {
     const newMazeKey = `maze${i}`;
 
-    const widthMinus2 = world.size.width - 2;
+    const widthMinus2 = width - 2;
     const newMaze = [];
 
     // Create the maze, row by row
@@ -193,7 +196,7 @@ const generateMaze = (makeNumMazes, mazes) => {
   
   console.log(mazes);
 };
-generateMaze(9, mazes);
+generateMaze(9, mazes, world);
 
 const pickMaze = () => {
   
@@ -208,6 +211,8 @@ const pickMaze = () => {
   return selectedMaze; 
 };
 
+// Initialize GUI
+createUI(world, generateMaze, mazes);
 
 
 // Axis Helper
