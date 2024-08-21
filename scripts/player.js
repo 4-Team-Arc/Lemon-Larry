@@ -1,0 +1,87 @@
+import * as THREE from 'three';
+import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+
+export class Player {
+  maxSpeed = 10;
+  input = new THREE.Vector3();
+  velocity = new THREE.Vector3();
+
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
+  controls = new PointerLockControls(this.camera, document.body)
+  cameraHelper = new THREE.CameraHelper(this.camera)
+
+  constructor(scene) {    
+    this.position.set(15, 10, 15);
+    scene.add(this.camera);
+    scene.add(this.cameraHelper);
+
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
+    document.addEventListener('keyup', this.onKeyUp.bind(this));
+  }
+
+  applyInputs(changeInTime) {
+    if (this.controls.isLocked) {
+      this.velocity.x = this.input.x;
+      this.velocity.z = this.input.z;
+      // this.velocity.y = this.input.y;
+      this.controls.moveRight(this.velocity.x * changeInTime)
+      this.controls.moveForward(this.velocity.z * changeInTime)
+      
+    }
+  }
+
+  get position() {
+    return this.camera.position;
+  }
+
+  onKeyDown(event) {
+    if (!this.controls.isLocked) {
+      this.controls.lock();
+      
+    }
+
+    switch(event.code) {
+      case 'KeyW':
+        this.input.z = this.maxSpeed;
+        break;
+      case 'KeyA':
+        this.input.x = -this.maxSpeed;
+        break;
+      case 'KeyS':
+        this.input.z = -this.maxSpeed;
+        break;
+      case 'KeyD':
+        this.input.x = this.maxSpeed;
+        break;
+      case 'KeyC':
+        this.input.y = this.maxSpeed;
+        break;
+      case 'KeyZ':
+        this.input.y = -this.maxSpeed;
+        break;
+      case 'KeyR':
+        this.position.set(15, 10, 15);
+        this.velocity.set(0, 0, 0)
+        break;
+    }
+  }
+  
+  onKeyUp(event) {
+
+    switch(event.code) {
+      case 'KeyW':
+        this.input.z = 0;
+        break;
+      case 'KeyA':
+        this.input.x = 0;
+        break;
+      case 'KeyS':
+        this.input.z = 0;
+        break;
+      case 'KeyD':
+        this.input.x = 0;
+        break;
+    }
+  }
+};
