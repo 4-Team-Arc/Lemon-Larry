@@ -35,7 +35,7 @@ usersRouter.get('/:id', async (req, res) => {
 
 usersRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { username, password } = req.body;
+  const { email, username, password } = req.body;
 
   try {
     const user = await prisma.user.findUnique({
@@ -45,6 +45,7 @@ usersRouter.put('/:id', async (req, res) => {
     }
 
     const updatedData = {};
+    if (email) updatedData.email = email;
     if (username) updatedData.username = username;
     if (password) updatedData.password = await bcrypt.hash(password, 10);
 

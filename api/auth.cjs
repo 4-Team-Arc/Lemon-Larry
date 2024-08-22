@@ -6,15 +6,27 @@ const { createUser } = require('../DB/users.cjs');
 const secretKey = process.env.JWT_SECRET_KEY;
 
 const registerUser = async(req, res) => {
-  const {username, password } = req.body;
+  const {email, username, password } = req.body;
   try{
-    const usernameIsTaken = await prisma.user.findUnique({
-      where: {username}
+    const badCredentials = await prisma.user.findUnique({
+      where: {username, email}
     })
-    if(usernameIsTaken){
-      return res.status(409).json({message:'Username is already in use'})
+    if(badCredentials){
+      res.status(409).json({message: 'Invalid login credentials'})
     }
-    const newUser = await createUser(username, password);
+    // const usernameIsTaken = await prisma.user.findUnique({
+    //   where: {username}
+    // })
+    // if(usernameIsTaken){
+    //   return res.status(409).json({message:'Username is already in use'})
+    // }
+    // const emailIsTaken = await prisma.user.findUnique({
+    //   where: {email: email}
+    // })
+    // if(emailIsTaken){
+    //   return res.status(409).json({message:'Email has already been used'})
+    // }
+    const newUser = await createUser(email, username, password);
     res.status(201).json({
       message: `User: ${newUser.username} Registered Successfully!`,
       user: newUser
