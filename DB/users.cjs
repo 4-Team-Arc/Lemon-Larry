@@ -1,11 +1,18 @@
 const bcrypt = require('bcrypt');
 const prisma = require('./client.cjs');
 
-const createUser = async(username, password) =>{
+const createUser = async(email, username, password) =>{
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    const resultofSearch = await prisma.user.findUnique({
+      where: {username, email} // ==> null
+    })
+    if(badCredentials){
+      res.status(409).json({message: 'Invalid login credentials'})
+    }
     const newUser = await prisma.user.create({
       data: {
+        email: email,
         username: username,
         password: hashedPassword
       }
