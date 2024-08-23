@@ -4,6 +4,7 @@ import { World } from './world'
 import { Player } from './player'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { createUI } from './ui'
+import { Physics } from './physics';
 
 const stats = new Stats();
 document.body.append(stats.dom);
@@ -12,13 +13,13 @@ document.body.append(stats.dom);
 const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x6cc0b8);
+renderer.setClearColor(0x242323);
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 // Camera Setup
 const orbitCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
-orbitCamera.position.set(14, 30, 25);
+orbitCamera.position.set(14, 20, 25);
 
 // Controls setup
 const controls = new OrbitControls(orbitCamera, renderer.domElement);
@@ -172,49 +173,14 @@ const pickMaze = () => {
 
 // Scene setup
 const scene = new THREE.Scene();;
-const world = new World({ width: 30, wallHeight: 3 }, mazes.maze3);
-world.setupWorld();
+const world = new World({ width: 30, wallHeight: 3 }, pickMaze());
+world.generateBlocks();
+world.generateMeshes();
 scene.add(world);
 
 const player = new Player(scene);
 
-// Generate random Maze
-export const generateMaze = (makeNumMazes, mazes, world) => {
-  const width = world.size.width;
-  const onesArray = new Array(width).fill(1);
-
-  for (let i = 1; i <= makeNumMazes; i++) {
-    const newMazeKey = `maze${i}`;
-
-    const widthMinus2 = width - 2;
-    const newMaze = [];
-
-    // Create the maze, row by row
-    for (let j = 0; j < widthMinus2; j++) {
-      const row = [1]; 
-      
-      for (let k = 0; k < widthMinus2; k++) {
-        row.push(Math.random() < 0.5 ? 0 : 1); 
-      }
-      
-      row.push(1); 
-      newMaze.push(row); 
-    }
-    
-    
-    newMaze.unshift(onesArray); 
-    newMaze.push(onesArray); 
-    
-    
-    mazes[newMazeKey] = newMaze;
-  }
-  
-  console.log(mazes);
-};
-
-// Initialize GUI
-// createUI(world, generateMaze, mazes);
-
+const physics = new Physics(scene)
 
 // Axis Helper
 // The X axis is red. The Y axis is green. The Z axis is blue.
@@ -222,11 +188,11 @@ const axesHelper = new THREE.AxesHelper( 500 );
 scene.add( axesHelper );
 
 // Light setup
-const sun = new THREE.PointLight(0xffffff, 10000, 300); // (color, intensity, distance)
+const sun = new THREE.PointLight(0xffffff, 500, 100); // (color, intensity, distance)
 const setupLights = () => {
 
   // Sunlight-like light emitting in all directions
-  sun.position.set(15, 80, 15);
+  sun.position.set(15, 20, 15);
   
   sun.castShadow = true; // Enable shadow casting if needed
   scene.add(sun);
@@ -251,6 +217,8 @@ const animate = () => {
 
   requestAnimationFrame(animate);
   player.applyInputs(changeInTime)
+  player.updateBoundsHelper();
+  physics.update(changeInTime, player, world)
   renderer.render(scene, player.controls.isLocked ? player.camera : orbitCamera)
   stats.update();
 
