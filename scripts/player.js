@@ -3,6 +3,8 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 
 
 export class Player {
+  radius = .25;
+  height = 1.5
   maxSpeed = 10;
   input = new THREE.Vector3();
   velocity = new THREE.Vector3();
@@ -12,23 +14,36 @@ export class Player {
   cameraHelper = new THREE.CameraHelper(this.camera)
 
   constructor(scene) {    
-    this.position.set(15, 10, 15);
+    this.position.set(3, 3, 3);
     scene.add(this.camera);
     scene.add(this.cameraHelper);
 
     document.addEventListener('keydown', this.onKeyDown.bind(this));
     document.addEventListener('keyup', this.onKeyUp.bind(this));
+
+    // Wireframe cyclinder to visualize players bounding cylinder
+    this.boundsHelper = new THREE.Mesh(
+      new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
+      new THREE.MeshBasicMaterial({wireframe: true})
+    );
+    scene.add(this.boundsHelper);
   }
 
   applyInputs(changeInTime) {
     if (this.controls.isLocked) {
       this.velocity.x = this.input.x;
       this.velocity.z = this.input.z;
-      // this.velocity.y = this.input.y;
       this.controls.moveRight(this.velocity.x * changeInTime)
       this.controls.moveForward(this.velocity.z * changeInTime)
+
+      this.position.y += this.velocity.y * changeInTime;
       
     }
+  }
+
+  updateBoundsHelper() {
+    this.boundsHelper.position.copy(this.position);
+    this.boundsHelper.position.y -= this.height / 2;
   }
 
   get position() {

@@ -13,12 +13,12 @@ export function createUI(world, sun, player) {
   // Sun Settings
   const sunFolder = gui.addFolder('Sun Settings');
   sunFolder.add(sun.position, 'x', -.5*width, 1.5*width, 1).name('Sun X Position');
-  sunFolder.add(sun.position, 'y', 0, 100, 1).name('Sun Y Height');
+  sunFolder.add(sun.position, 'y', 0, 50).name('Sun Y Height');
   sunFolder.add(sun.position, 'z', -.5*width, 1.5*width, 1).name('Sun Z Position');
   
-  sunFolder.add(sun, 'intensity', 0, 1000, 1).name('Sun Intensity');
+  sunFolder.add(sun, 'intensity', 0, 10000, 1).name('Sun Intensity');
   
-  sunFolder.add(sun, 'distance', 0, 1000, 1).name('Sun Distance');
+  sunFolder.add(sun, 'distance', 0, 1000).name('Sun Distance');
   
   sunFolder.add(sun, 'castShadow').name('Cast Shadow');
   
@@ -26,11 +26,12 @@ export function createUI(world, sun, player) {
   
   // Player Settings
   const playerFolder = gui.addFolder('Player Settings');
-    playerFolder.add(player, 'maxSpeed', 1, 20, 1).name('Max Speed')
-    playerFolder.add(player.position, 'y', 0, 10, 1).name('Player Y Height');
+    playerFolder.add(player, 'maxSpeed', 0, 10, .1).name('Max Speed')
+    playerFolder.add(player.position, 'y', 0, 20, 1).name('Player Y Height');
     playerFolder.add(player.cameraHelper, 'visible').name('Show Camera Helper');
 
   gui.onChange(() => {
-    world.setupWorld();
+    world.generateBlocks();
+    world.generateMeshes();
   });
 }
