@@ -173,7 +173,7 @@ const pickMaze = () => {
 
 // Scene setup
 const scene = new THREE.Scene();;
-const world = new World({ width: 30, wallHeight: 3 }, pickMaze());
+const world = new World({ width: 30, wallHeight: 3 }, mazes.maze0);
 world.generateBlocks();
 world.generateMeshes();
 scene.add(world);
@@ -216,8 +216,7 @@ const animate = () => {
   let changeInTime = (currentTime - previousTime) / 1000;
 
   requestAnimationFrame(animate);
-  player.applyInputs(changeInTime)
-  player.updateBoundsHelper();
+  
   physics.update(changeInTime, player, world)
   renderer.render(scene, player.controls.isLocked ? player.camera : orbitCamera)
   stats.update();

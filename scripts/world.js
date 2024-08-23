@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { blocks } from './blocks';
 
 const geometry = new THREE.BoxGeometry();
-const wallMaterial = new THREE.MeshLambertMaterial({color: 0x1c1b1b}); // , wireframe: true
+const wallMaterial = new THREE.MeshLambertMaterial({color: 0x3b3d3b}); // , wireframe: true
 const floorMaterial = new THREE.MeshLambertMaterial({color: 0x000000});
 
 const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); // Small sphere
@@ -33,23 +33,53 @@ export class World extends THREE.Group {
 
   generateBlocks() {
     this.data = [];
+    let count = 1;
     for (let x = 0; x < this.size.width; x++) {
-      const slice = [];
+        const slice = [];
 
-      for (let y = 0; y <= this.size.wallHeight; y++) {
-        const row = [];
+        for (let y = 0; y <= this.size.wallHeight; y++) {
+            const row = [];
 
-        for (let z = 0; z < this.size.width; z++) {
-          row.push({
-            id: 1,
-            instanceId: null
-          });
+            for (let z = 0; z < this.size.width; z++) {
+                if (y === 0) {
+                    // Floor layer
+                    row.push({
+                        id: 1,
+                        instanceId: null
+                    });
+
+                    // debug info
+                    // console.log(`Placing block at x: ${x}, y: ${y}, z: ${z}, id: ${row[row.length - 1].id}, total blocks: ${count}`);
+                    // count++;
+
+                } else if (
+                    y > 0 && y <= this.size.wallHeight && 
+                    (x === 0 || x === this.size.width - 1 || z === 0 || z === this.size.width - 1)
+                ) {
+                    // Wall layers at the edges
+                    row.push({
+                        id: 2,
+                        instanceId: null
+                    });
+
+                    // debug info
+                    // console.log(`Placing block at x: ${x}, y: ${y}, z: ${z}, id: ${row[row.length - 1].id}, total blocks: ${count}`);
+                    // count++;
+
+                } else {
+                    // Empty space
+                    row.push({
+                        id: 0,
+                        instanceId: null
+                    });
+                }
+            }
+            slice.push(row);
         }
-        slice.push(row);
-      }
-      this.data.push(slice)
+        this.data.push(slice);
     }
-  }
+}
+
 
   generateMeshes = () => {  
     this.clear();  
@@ -98,7 +128,7 @@ export class World extends THREE.Group {
           z > 0 && z < this.size.width
       ) { 
           
-          blockId = this.getBlock(x, 1, z).id
+          blockId = this.getBlock(x, 0, z).id
           instanceId = sphereMesh.count;
 
           if (blockId !== blocks.empty.id) {
@@ -232,24 +262,32 @@ export class World extends THREE.Group {
 
   createMaze = (wallMesh, matrix) => {
     // Loop through the maze layout array
-    for (let z = 1; z < this.mazeLayout.length; z++) {
-      for (let x = 1; x < this.mazeLayout[z].length; x++) {
+    for (let z = 0; z < this.mazeLayout.length; z++) {
+        for (let x = 0; x < this.mazeLayout[z].length; x++) {
 
-        // Assuming 1 represents a wall in the maze
-        if (this.mazeLayout[z][x] === 1) { 
-          for (let y = 1; y <= this.size.wallHeight; y++) {
-            // Place a block at this position
-            matrix.setPosition(x, y, z); // Adjusting the y-coordinate for height
-            wallMesh.setMatrixAt(wallMesh.count++, matrix);
-          }
+            // Assuming 1 represents a wall in the maze
+            if (this.mazeLayout[z][x] === 1) { 
+                for (let y = 1; y <= this.size.wallHeight; y++) {
+                    // Get the block at this position
+                    let block = this.getBlock(x, y, z);
+
+                    // Update the block's id to 3 to represent a maze wall
+                    if (block) {
+                        block.id = 3;
+                    }
+
+                    // Place the maze wall block visually
+                    matrix.setPosition(x, y, z); // Adjusting the y-coordinate for height
+                    wallMesh.setMatrixAt(wallMesh.count++, matrix);
+                }
+            }
         }
-      }
     }
-  };
+};
 
   getBlock(x, y, z) {
     if (this.inBounds(x, y, z)) {
-      return this.data[z][y][z];
+      return this.data[x][y][z];
     } else {
       return null;
     }

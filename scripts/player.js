@@ -14,7 +14,7 @@ export class Player {
   cameraHelper = new THREE.CameraHelper(this.camera)
 
   constructor(scene) {    
-    this.position.set(15, 5, 15);
+    this.position.set(3, 3, 3);
     scene.add(this.camera);
     scene.add(this.cameraHelper);
 
@@ -33,9 +33,10 @@ export class Player {
     if (this.controls.isLocked) {
       this.velocity.x = this.input.x;
       this.velocity.z = this.input.z;
-      // this.velocity.y = this.input.y;
       this.controls.moveRight(this.velocity.x * changeInTime)
       this.controls.moveForward(this.velocity.z * changeInTime)
+
+      this.position.y += this.velocity.y * changeInTime;
       
     }
   }

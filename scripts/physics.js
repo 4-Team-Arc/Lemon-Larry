@@ -10,26 +10,37 @@ const collisionMaterial = new THREE.MeshBasicMaterial({
 });
 const collisionGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001)
 
+const contactGeometry = new THREE.SphereGeometry(0.03, 6, 6);
+
+const contactMaterial = new THREE.MeshBasicMaterial({
+  wireframe: true,
+  color: 0x00ff00
+})
 
 export class Physics {
+  gravity = .1;
+
   constructor(scene) {
     this.helpers = new THREE.Group();
     scene.add(this.helpers)
   }
 
   update(changeInTime, player, world) {
-    const candidates = this.broadPhase(player, world);
-    const collisions = this.narrowPhase(candidates, player);
+    this.helpers.clear()
+    player.velocity.y -= this.gravity * changeInTime
+    player.applyInputs(changeInTime)
+    player.updateBoundsHelper();
+    this.detectCollisions(player, world);
   }
 
-  // detectCollisions(player, world) {
-  //   const candidates = this.broadPhase(player, world);
-  //   const collisions = this.narrowPhase(candidates, player);
+  detectCollisions(player, world) {
+    const candidates = this.broadPhase(player, world);
+    const collisions = this.narrowPhase(candidates, player);
 
-  //   if (collisions.length > 0) {
-  //     this.resolveCollisions(collisions);
-  //   }
-  // }
+    if (collisions.length > 0) {
+      this.resolveCollisions(collisions, player);
+    }
+  }
 
   broadPhase(player, world) {
 
@@ -58,13 +69,16 @@ export class Physics {
           const block = world.getBlock(x, y, z);
           if (block && block.id !== blocks.empty.id) {
             const blockPos = { x, y, z }
-            candidates.push(blockPos)
+            candidates.push({ position: blockPos, id: block.id })
+
             this.addCollisionHelper(blockPos)
           }
         };
       };
     };
-    console.log(`Broad phase candidates: ${candidates.length}`)
+    
+      // console.log(`Total Collision Candidates: ${candidates.length}`)
+    
     return candidates;
   }
 
@@ -77,9 +91,9 @@ export class Physics {
 
       const playerPoint = player.position;
       const closestPoint = {
-        x: Math.max(block.x - 0.5, Math.min(playerPoint.x, block.x + 0.5)),
-        y: Math.max(block.y - 0.5, Math.min(playerPoint.y - (player.height / 2), block.y + 0.5)),
-        z: Math.max(block.z - 0.5, Math.min(playerPoint.z, block.z + 0.5)),
+        x: Math.max(block.position.x - 0.5, Math.min(playerPoint.x, block.position.x + 0.5)),
+        y: Math.max(block.position.y - 0.5, Math.min(playerPoint.y - (player.height / 2), block.position.y + 0.5)),
+        z: Math.max(block.position.z - 0.5, Math.min(playerPoint.z, block.position.z + 0.5)),
       };
 
       const deltaX = closestPoint.x - player.position.x;
@@ -101,23 +115,50 @@ export class Physics {
         }
 
         collisions.push({
-          block,
+          block: block,
           contactPoint: closestPoint,
           normal,
           overlap
         });
+
+        this.addContactPointHelper(closestPoint)
+        // Debugging log
+       
+          // console.log(`Narrowphase Collisions: ${collisions.length} block-id ${block.id}`);
+          // console.log(`Collision Block pos ${ block.position.x }, ${ block.position.y }, ${ block.position.z }`)
       }
+
+      
 
     }
 
-    console.log(`Narrow phase collisions: ${collisions.length}`)
     return collisions;
+  }
+
+  resolveCollisions(collisions, player) {
+    collisions.sort((a, b) => {
+      return a.overlap < b.overlap;
+    });
+
+    for (const collision of collisions) {
+
+      // Change player position so there is no more overlap
+      let deltaPosition = collision.normal.clone();
+      deltaPosition.multiplyScalar(collision.overlap);
+      player.position.add(deltaPosition);
+    }
   }
 
   addCollisionHelper(block) {
     const blockMesh = new THREE.Mesh(collisionGeometry, collisionMaterial);
     blockMesh.position.copy(block);
     this.helpers.add(blockMesh)
+  }
+
+  addContactPointHelper(point) {
+    const contactMesh = new THREE.Mesh(contactGeometry, contactMaterial);
+    contactMesh.position.copy(point);
+    this.helpers.add(contactMesh);
   }
 
   pointInPlayerBoundingCylinder(playerPoint, player) {
