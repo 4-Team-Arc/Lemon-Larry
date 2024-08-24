@@ -5,7 +5,7 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 export class Player {
   radius = .25;
   height = 1.5
-  maxSpeed = 10;
+  maxSpeed = 3
   input = new THREE.Vector3();
   velocity = new THREE.Vector3();
 
@@ -14,7 +14,7 @@ export class Player {
   cameraHelper = new THREE.CameraHelper(this.camera)
 
   constructor(scene) {    
-    this.position.set(3, 3, 3);
+    this.position.set(13, 3, 13);
     scene.add(this.camera);
     scene.add(this.cameraHelper);
 

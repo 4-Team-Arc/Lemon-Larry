@@ -180,7 +180,7 @@ scene.add(world);
 
 const player = new Player(scene);
 
-const physics = new Physics(scene)
+const physics = new Physics(scene, world)
 
 // Axis Helper
 // The X axis is red. The Y axis is green. The Z axis is blue.
