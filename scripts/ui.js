@@ -6,9 +6,9 @@ export function createUI(world, sun, player) {
 
   // World Settings
   const worldFolder = gui.addFolder('Wold Settings');
-    worldFolder.add(world.size, 'width', 5, 100, 1).name('Width');
+    // worldFolder.add(world.size, 'width', 5, 100, 1).name('Width');
     worldFolder.add(world.size, 'wallHeight', 1, 10, 1).name('Wall Height');  
-    worldFolder.add(world, 'sphereChance', 0, 1, 0.01).name('Sphere Chance');
+    worldFolder.add(world, 'sphereChance', 0, 100, 1).name('Sphere Chance %');
   
   // Sun Settings
   const sunFolder = gui.addFolder('Sun Settings');
@@ -29,6 +29,7 @@ export function createUI(world, sun, player) {
     playerFolder.add(player, 'maxSpeed', 0, 10, .1).name('Max Speed')
     playerFolder.add(player.position, 'y', 0, 20, 1).name('Player Y Height');
     playerFolder.add(player.cameraHelper, 'visible').name('Show Camera Helper');
+    playerFolder.add(player.boundsHelper, 'visible').name('Show Bounds Helper');
 
   gui.onChange(() => {
     world.generateBlocks();

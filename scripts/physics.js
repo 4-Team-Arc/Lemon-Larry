@@ -18,7 +18,7 @@ const contactMaterial = new THREE.MeshBasicMaterial({
 })
 
 export class Physics {
-  gravity = .1;
+  gravity = .01;
 
   constructor(scene) {
     this.helpers = new THREE.Group();
