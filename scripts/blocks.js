@@ -18,5 +18,10 @@ export const blocks = {
     id: 3,
     name: 'maze',
     color: 0x1c1b1b
+  },
+  lemon: {
+    id: 4,
+    name: 'lemon',
+    color: 0xFFFF00
   }
 }

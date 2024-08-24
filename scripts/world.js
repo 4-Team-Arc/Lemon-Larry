@@ -2,16 +2,17 @@ import * as THREE from 'three';
 import { blocks } from './blocks';
 
 const geometry = new THREE.BoxGeometry();
-const wallMaterial = new THREE.MeshLambertMaterial({color: 0x3b3d3b}); // , wireframe: true
-const floorMaterial = new THREE.MeshLambertMaterial({color: 0x000000});
+const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); 
 
-const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); // Small sphere
+const wallMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+const floorMaterial = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
 const lemonMaterial = new THREE.MeshStandardMaterial({
+
   color: 0xFFFF00, 
   bumpScale: 0.7,
-  roughness: 0.99, // Lemons are not very shiny, so we use a high roughness value
-  metalness: 0.0  // Lemons are not metallic
-}); // yellow spheres
+  roughness: 0.99, 
+  metalness: 0.0  
+}); 
 
 
 export class World extends THREE.Group {
@@ -22,41 +23,54 @@ export class World extends THREE.Group {
    * instanceId: number
    * }[][][]}
    */  
+
+  // 3D array to contain all world blocks
   data = [];
 
   constructor(size = { width: 30, wallHeight: 3 }, mazeLayout) { 
     super();
     this.size = size;
     this.mazeLayout = mazeLayout;
-    this.sphereChance = .25;
+    this.sphereChance = 25;
   }
 
+  /**
+  * Generates a 3D array representing the world.
+  * Each slice in the array corresponds to an x-coordinate, 
+  * containing rows that represent y-coordinates, and each row 
+  * contains blocks at various z-coordinates.
+  */
   generateBlocks() {
     this.data = [];
-    let count = 1;
+    // let count = 1;  // Debugging variable 
+
+    // Creates a 2D array for each x coordinate (a slice of the world)
     for (let x = 0; x < this.size.width; x++) {
         const slice = [];
 
+        // Creates a 1D array for each y coordinate (a row of the current slice)
         for (let y = 0; y <= this.size.wallHeight; y++) {
             const row = [];
 
+            // Creates an object for each z coordinate (the block at the given x, y, z)
             for (let z = 0; z < this.size.width; z++) {
-                if (y === 0) {
-                    // Floor layer
+
+                // Floor layer
+                if (y === 0) {                    
                     row.push({
                         id: 1,
                         instanceId: null
                     });
 
-                    // debug info
+                    // Debugging info
                     // console.log(`Placing block at x: ${x}, y: ${y}, z: ${z}, id: ${row[row.length - 1].id}, total blocks: ${count}`);
                     // count++;
 
+                  // Wall layers at the edges
                 } else if (
                     y > 0 && y <= this.size.wallHeight && 
                     (x === 0 || x === this.size.width - 1 || z === 0 || z === this.size.width - 1)
                 ) {
-                    // Wall layers at the edges
                     row.push({
                         id: 2,
                         instanceId: null
@@ -66,8 +80,8 @@ export class World extends THREE.Group {
                     // console.log(`Placing block at x: ${x}, y: ${y}, z: ${z}, id: ${row[row.length - 1].id}, total blocks: ${count}`);
                     // count++;
 
+                  // Empty space
                 } else {
-                    // Empty space
                     row.push({
                         id: 0,
                         instanceId: null
@@ -84,28 +98,28 @@ export class World extends THREE.Group {
   generateMeshes = () => {  
     this.clear();  
     
-    const maxBlocks = (this.size.width ** 2) * this.size.wallHeight;
+    const maxBlocks = (this.size.width** 2) * this.size.wallHeight;
+
     const wallMesh = new THREE.InstancedMesh(geometry, wallMaterial, maxBlocks);
     const floorMesh = new THREE.InstancedMesh(geometry, floorMaterial, maxBlocks)
     const sphereMesh = new THREE.InstancedMesh(sphereGeometry, lemonMaterial, maxBlocks)
 
+    // Allow shadows on all instances
     wallMesh.castShadow = true;
-    wallMesh.receiveShadow = true
-
+    wallMesh.receiveShadow = true;
     floorMesh.castShadow = true;
-    floorMesh.receiveShadow = true
-
+    floorMesh.receiveShadow = true;
     sphereMesh.castShadow = true;
-    sphereMesh.receiveShadow = true
+    sphereMesh.receiveShadow = true;
 
+    // Instances start at 0
     wallMesh.count = 0; 
     floorMesh.count = 0;
     sphereMesh.count = 0;
 
     const matrix = new THREE.Matrix4();  
-    const sphereMatrix = new THREE.Matrix4();
     
-    // Create the floor (y = 0)
+    // Create the floor (y = 0) and scatter spheres
     for (let x = 0; x < this.size.width; x++) {
       for (let z = 0; z < this.size.width; z++) {
 
@@ -118,24 +132,22 @@ export class World extends THREE.Group {
           this.setBlockInstanceId(x, 0, z, instanceId);
           floorMesh.count++;
         }
-
-
     
         // default to 25% chance to place a sphere
         // Randomly scatter small spheres above the floor (y = 1)
-        if (Math.random() < this.sphereChance && 
-          x > 0 && x < this.size.width &&
-          z > 0 && z < this.size.width
-      ) { 
-          
-          blockId = this.getBlock(x, 0, z).id
-          instanceId = sphereMesh.count;
+        if (Math.random() < this.sphereChance / 100 && 
+          x > 0 && x < this.size.width - 1 &&
+          z > 0 && z < this.size.width - 1
+          ) { 
 
-          if (blockId !== blocks.empty.id) {
-            sphereMatrix.setPosition(x, 1, z);  
-            sphereMesh.setMatrixAt(instanceId, sphereMatrix);  
-            this.setBlockInstanceId(x, 1, z, instanceId);
-            sphereMesh.count++;
+          // Check if the maze layout at this position is a path block
+          if (this.mazeLayout[z][x] === 0) {
+              instanceId = sphereMesh.count;
+
+              matrix.setPosition(x, 1, z);  
+              sphereMesh.setMatrixAt(instanceId, matrix);  
+              this.setBlockInstanceId(x, 1, z, instanceId);  
+              sphereMesh.count++;
           } 
         }
       }
@@ -198,7 +210,7 @@ export class World extends THREE.Group {
       }
     }
 
-    // // Regenerate and create the maze based on the new size
+    // Regenerate and create the maze based on the new size
     // this.mazeLayout = this.generateMazeLayout(this.size.width);
 
     // Maze creation
@@ -238,7 +250,7 @@ export class World extends THREE.Group {
         const newX = x + changeInx;
         const newZ = z + changeInz;
 
-        //     if the new x             and z are within the boundry     and the new position is a wall
+        //  if the new x and z are within the boundry  and the new position is a wall
         if (newX > 0 && newX < size - 1 && newZ > 0 && newZ < size - 1 && maze[newZ][newX] === 1) {
   
           //  create the path
@@ -261,13 +273,15 @@ export class World extends THREE.Group {
   };
 
   createMaze = (wallMesh, matrix) => {
+
     // Loop through the maze layout array
     for (let z = 0; z < this.mazeLayout.length; z++) {
         for (let x = 0; x < this.mazeLayout[z].length; x++) {
 
-            // Assuming 1 represents a wall in the maze
+            // 1 represents a wall in the maze
             if (this.mazeLayout[z][x] === 1) { 
                 for (let y = 1; y <= this.size.wallHeight; y++) {
+
                     // Get the block at this position
                     let block = this.getBlock(x, y, z);
 
@@ -277,13 +291,13 @@ export class World extends THREE.Group {
                     }
 
                     // Place the maze wall block visually
-                    matrix.setPosition(x, y, z); // Adjusting the y-coordinate for height
+                    matrix.setPosition(x, y, z); 
                     wallMesh.setMatrixAt(wallMesh.count++, matrix);
                 }
             }
         }
     }
-};
+  };
 
   getBlock(x, y, z) {
     if (this.inBounds(x, y, z)) {
