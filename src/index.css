@@ -1,5 +1,6 @@
 body {
   margin:  0;
+  background-color: black;
 }
 
 h1{
@@ -13,7 +14,27 @@ h1{
   align-items: center;
   display:flex;
   justify-content: space-evenly;
-  border: solid thin black;
+  border: solid thin red;
   border-radius: 25px;
   box-sizing: border-box;
+  background-image: linear-gradient(to bottom, red, black);
+}
+
+a{
+  color: white;
+  text-decoration: none;
+}
+
+.loginForm{
+  height: 400px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-items: center;
 }

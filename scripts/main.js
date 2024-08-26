@@ -219,7 +219,7 @@ const animate = () => {
 
   physics.update(changeInTime, player, world)
   renderer.render(scene, player.controls.isLocked ? player.camera : orbitCamera)
-  stats.update();
+  // stats.update();
 
   previousTime = currentTime;
 }
