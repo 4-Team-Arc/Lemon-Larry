@@ -11,7 +11,7 @@ const GameScene = () => {
 
   const containerRef = useRef(null);
 
-  useEffect(() => {  
+  useEffect(() => {
 
   // const stats = new Stats();
   // document.body.append(stats.dom);
@@ -173,12 +173,12 @@ const GameScene = () => {
   maze4: []
   };
 
-  // const pickMaze = () => {  
-  //   const mazeNum = Math.floor(Math.random() * 4); 
+  // const pickMaze = () => {
+  //   const mazeNum = Math.floor(Math.random() * 4);
   //   const mazeKey = `maze${mazeNum}`;
   //   const selectedMaze = mazes[mazeKey];
-  //   console.log(`Selected maze: ${mazeKey}`, selectedMaze);  
-  //   return selectedMaze; 
+  //   console.log(`Selected maze: ${mazeKey}`, selectedMaze);
+  //   return selectedMaze;
   // };
 
   //Scene setup
@@ -202,14 +202,14 @@ const GameScene = () => {
 
     // Sunlight-like light emitting in all directions
     sun.position.set(15, 20, 15);
-    
+
     sun.castShadow = true; // Enable shadow casting if needed
     scene.add(sun);
-    
+
     const ambient = new THREE.AmbientLight(0x404040); // Soft ambient light
     ambient.intensity = 0.5; // Adjust this to make the scene brighter or dimmer
     scene.add(ambient);
-    
+
     // Optional: Helper to visualize the light
     const lightHelper = new THREE.PointLightHelper(sun, 1);
     scene.add(lightHelper);
@@ -225,7 +225,7 @@ const GameScene = () => {
     let changeInTime = (currentTime - previousTime) / 1000;
 
     requestAnimationFrame(animate);
-    
+
     physics.update(changeInTime, player, world)
     renderer.render(scene, player.controls.isLocked ? player.camera : orbitCamera)
     // stats.update();

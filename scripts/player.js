@@ -14,10 +14,12 @@ export class Player {
 
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
   controls = new PointerLockControls(this.camera, document.body)
+  
   cameraHelper = new THREE.CameraHelper(this.camera)
 
   constructor(scene) {    
-    this.position.set(13, 3, 13);
+    this.position.set(13, 4, 11);
+    this.camera.lookAt(13, 3, 25)
     scene.add(this.camera);
     scene.add(this.cameraHelper);
 
