@@ -5,8 +5,8 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 export class Player {
   radius = .25;
   height = 1.5
-  maxSpeed = 3
-  jumpSpeed = 10;
+  maxSpeed = 3.5
+  jumpSpeed = 7;
   onGround = false;
   input = new THREE.Vector3();
   velocity = new THREE.Vector3();
