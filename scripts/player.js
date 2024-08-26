@@ -5,9 +5,12 @@ import { PointerLockControls } from 'three/addons/controls/PointerLockControls.j
 export class Player {
   radius = .25;
   height = 1.5
-  maxSpeed = 3
+  maxSpeed = 3.5
+  jumpSpeed = 7;
+  onGround = false;
   input = new THREE.Vector3();
   velocity = new THREE.Vector3();
+  #worldVelocity = new THREE.Vector3();
 
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
   controls = new PointerLockControls(this.camera, document.body)
@@ -27,6 +30,17 @@ export class Player {
       new THREE.MeshBasicMaterial({wireframe: true})
     );
     scene.add(this.boundsHelper);
+  }
+
+  get worldVelocity() {
+    this.#worldVelocity.copy(this.velocity);
+    this.#worldVelocity.applyEuler(new THREE.Euler(0, this.camera.rotation.y, 0));
+    return this.#worldVelocity;
+  }
+
+  applyWorldDeltaVelocity(deltaVelocity) {
+    deltaVelocity.applyEuler(new THREE.Euler(0, -this.camera.rotation.y, 0));
+    this.velocity.add(deltaVelocity)
   }
 
   applyInputs(changeInTime) {
@@ -79,6 +93,10 @@ export class Player {
         this.position.set(15, 10, 15);
         this.velocity.set(0, 0, 0)
         break;
+      case 'Space':
+        if (this.onGround) {
+          this.velocity.y += this.jumpSpeed
+        }
     }
   }
   
