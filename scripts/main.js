@@ -6,8 +6,8 @@ import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { createUI } from './ui'
 import { Physics } from './physics';
 
-const stats = new Stats();
-document.body.append(stats.dom);
+// const stats = new Stats();
+// document.body.append(stats.dom);
 
 // Renderer Setup
 const renderer = new THREE.WebGLRenderer();
@@ -159,16 +159,16 @@ maze4: []
 };
 
 const pickMaze = () => {
-  
-  const mazeNum = Math.floor(Math.random() * 4); 
+
+  const mazeNum = Math.floor(Math.random() * 4);
 
   const mazeKey = `maze${mazeNum}`;
 
   const selectedMaze = mazes[mazeKey];
 
   console.log(`Selected maze: ${mazeKey}`, selectedMaze);
-  
-  return selectedMaze; 
+
+  return selectedMaze;
 };
 
 // Scene setup
@@ -193,14 +193,14 @@ const setupLights = () => {
 
   // Sunlight-like light emitting in all directions
   sun.position.set(15, 20, 15);
-  
+
   sun.castShadow = true; // Enable shadow casting if needed
   scene.add(sun);
-  
+
   const ambient = new THREE.AmbientLight(0x404040); // Soft ambient light
   ambient.intensity = 0.5; // Adjust this to make the scene brighter or dimmer
   scene.add(ambient);
-  
+
   // Optional: Helper to visualize the light
   const lightHelper = new THREE.PointLightHelper(sun, 1);
   scene.add(lightHelper);
@@ -216,7 +216,7 @@ const animate = () => {
   let changeInTime = (currentTime - previousTime) / 1000;
 
   requestAnimationFrame(animate);
-  
+
   physics.update(changeInTime, player, world)
   renderer.render(scene, player.controls.isLocked ? player.camera : orbitCamera)
   stats.update();
@@ -234,5 +234,5 @@ window.addEventListener('resize', () => {
 })
 
 setupLights();
-createUI(world, sun, player);
+// createUI(world, sun, player);
 animate();
