@@ -19,7 +19,7 @@ export class Physics {
   simulationRate = 200;
   timeStep = 1 / this.simulationRate;
   accumulator = 0;
-  gravity = 32;
+  gravity = 25;
 
   constructor(scene) {
     this.helpers = new THREE.Group();
