@@ -19,10 +19,18 @@ const GameScene = () => {
   // Renderer Setup
   const renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  // renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x242323);
   renderer.shadowMap.enabled = true;
   containerRef.current.appendChild(renderer.domElement);
+
+  const resizeRendererToDisplaySize = () => {
+    const containerWidth = containerRef.current.clientWidth;
+    const containerHeight = containerRef.current.clientHeight;
+    renderer.setSize(containerWidth, containerHeight);
+  };
+
+  resizeRendererToDisplaySize();
 
   // Camera Setup
   const orbitCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight);
@@ -249,7 +257,7 @@ const GameScene = () => {
 
 }, []);
 
-return <div ref={containerRef}/>;
+return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 }
 
 export default GameScene
