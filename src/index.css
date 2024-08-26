@@ -23,6 +23,16 @@ h1{
 a{
   color: white;
   text-decoration: none;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+a:hover{
+  text-shadow: 7px -7px 3px rgba(255, 255, 255, 1);
+  color:black;
+}
+
+a:hover + .navbar {
+  opacity: 0.5;
 }
 
 .loginForm{
