@@ -10,11 +10,11 @@ const App = () => {
     <>
       <NavBar/>
           <Routes>
-            <Route exact path="/" element={<LoginPage/>}></Route>
+            <Route exact path="/" element={<h1>insert content here for home page</h1>}></Route>
             <Route exact path="/Login" element={<LoginPage/>}></Route>
-            <Route exact path="/About-Us" element={<AboutUsPage/>}></Route>
             <Route exact path="/Play" element={<GameScene />}></Route>
-          </Routes>      
+            <Route exact path="/About-Us" element={<AboutUsPage/>}></Route>
+          </Routes>
     </>
   )
 }
