@@ -158,20 +158,15 @@ const mazes = {
 maze4: []
 };
 
-const pickMaze = () => {
-  
-  const mazeNum = Math.floor(Math.random() * 4); 
+// const pickMaze = () => {  
+//   const mazeNum = Math.floor(Math.random() * 4); 
+//   const mazeKey = `maze${mazeNum}`;
+//   const selectedMaze = mazes[mazeKey];
+//   console.log(`Selected maze: ${mazeKey}`, selectedMaze);  
+//   return selectedMaze; 
+// };
 
-  const mazeKey = `maze${mazeNum}`;
-
-  const selectedMaze = mazes[mazeKey];
-
-  console.log(`Selected maze: ${mazeKey}`, selectedMaze);
-  
-  return selectedMaze; 
-};
-
-// Scene setup
+//Scene setup
 const scene = new THREE.Scene();;
 const world = new World({ width: 30, wallHeight: 3 }, mazes.maze0);
 world.generateBlocks();
@@ -180,7 +175,7 @@ scene.add(world);
 
 const player = new Player(scene);
 
-const physics = new Physics(scene, world)
+const physics = new Physics(scene)
 
 // Axis Helper
 // The X axis is red. The Y axis is green. The Z axis is blue.

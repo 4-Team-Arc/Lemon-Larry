@@ -1,7 +1,5 @@
 import * as THREE from 'three';
 import { blocks } from './blocks';
-import { Player } from './player';
-import { World } from './world';
 
 const collisionMaterial = new THREE.MeshBasicMaterial({
   color: 0xff0000,
@@ -18,7 +16,10 @@ const contactMaterial = new THREE.MeshBasicMaterial({
 })
 
 export class Physics {
-  gravity = .01;
+  simulationRate = 200;
+  timeStep = 1 / this.simulationRate;
+  accumulator = 0;
+  gravity = 32;
 
   constructor(scene) {
     this.helpers = new THREE.Group();
@@ -26,14 +27,20 @@ export class Physics {
   }
 
   update(changeInTime, player, world) {
-    this.helpers.clear()
-    player.velocity.y -= this.gravity * changeInTime
-    player.applyInputs(changeInTime)
-    player.updateBoundsHelper();
-    this.detectCollisions(player, world);
+    this.accumulator += changeInTime;
+
+    while (this.accumulator >= this.timeStep) {
+      this.helpers.clear()
+      player.velocity.y -= this.gravity * this.timeStep
+      player.applyInputs(this.timeStep)
+      player.updateBoundsHelper();
+      this.detectCollisions(player, world);
+      this.accumulator -= this.timeStep;
+  }
   }
 
   detectCollisions(player, world) {
+    player.onGround = false;
     const candidates = this.broadPhase(player, world);
     const collisions = this.narrowPhase(candidates, player, world);
 
@@ -110,12 +117,13 @@ export class Physics {
       if (this.pointInPlayerBoundingCylinder(closestPoint, player)) {
 
         const overlapY = (player.height / 2) - Math.abs(deltaY);
-        const overlapXZ = player.radius - Math.abs(deltaX**2 + deltaZ**2)
+        const overlapXZ = player.radius - Math.sqrt(deltaX**2 + deltaZ**2)
 
         let normal, overlap;
         if (overlapY < overlapXZ) {
           normal = new THREE.Vector3(0, -Math.sign(deltaY), 0);
           overlap = overlapY;
+          player.onGround = true;
         } else {
           normal = new THREE.Vector3(-deltaX, 0, -deltaZ)
           overlap = overlapXZ;
@@ -150,16 +158,32 @@ export class Physics {
   }
 
   resolveCollisions(collisions, player) {
+
+    // Resolve collisions from smallest to largest
     collisions.sort((a, b) => {
       return a.overlap < b.overlap;
     });
 
     for (const collision of collisions) {
 
+      if (!this.pointInPlayerBoundingCylinder(collision.contactPoint, player))
+      continue;
       // Change player position so there is no more overlap
+
+      // Vector pointing from palyer to contact poiint
       let deltaPosition = collision.normal.clone();
+
+      // Scaling vector to be same size as the overlap
       deltaPosition.multiplyScalar(collision.overlap);
+
+      // Push player away from the block the way of the collision just enough to remove overlap
       player.position.add(deltaPosition);
+      
+      let magnitude = player.worldVelocity.dot(collision.normal);
+      
+      let velocityAdjustment = collision.normal.clone().multiplyScalar(magnitude)
+      
+      player.applyWorldDeltaVelocity(velocityAdjustment.negate())
     }
   }
 
