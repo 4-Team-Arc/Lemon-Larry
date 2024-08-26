@@ -1,8 +1,8 @@
 const LoginPage = () => {
   return (
     <>
-    <form>
-      <button onsubmit={(e)=> {e.preventDefault();}}>Login</button>
+    <form onSubmit={(e)=> {e.preventDefault();}}>
+      <button >Login</button>
     </form>
     </>
   )
