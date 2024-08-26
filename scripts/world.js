@@ -27,6 +27,11 @@ export class World extends THREE.Group {
   // 3D array to contain all world blocks
   data = [];
 
+  // Declare properties to store meshes
+  sphereMesh = null;
+  floorMesh = null;
+  wallMesh = null;
+
   constructor(size = { width: 30, wallHeight: 3 }, mazeLayout) { 
     super();
     this.size = size;
@@ -100,37 +105,38 @@ export class World extends THREE.Group {
     
     const maxBlocks = (this.size.width** 2) * this.size.wallHeight;
 
-    const wallMesh = new THREE.InstancedMesh(geometry, wallMaterial, maxBlocks);
-    const floorMesh = new THREE.InstancedMesh(geometry, floorMaterial, maxBlocks)
-    const sphereMesh = new THREE.InstancedMesh(sphereGeometry, lemonMaterial, maxBlocks)
+    this.wallMesh = new THREE.InstancedMesh(geometry, wallMaterial, maxBlocks);
+    this.floorMesh = new THREE.InstancedMesh(geometry, floorMaterial, maxBlocks)
+    this.sphereMesh = new THREE.InstancedMesh(sphereGeometry, lemonMaterial, maxBlocks)
 
     // Allow shadows on all instances
-    wallMesh.castShadow = true;
-    wallMesh.receiveShadow = true;
-    floorMesh.castShadow = true;
-    floorMesh.receiveShadow = true;
-    sphereMesh.castShadow = true;
-    sphereMesh.receiveShadow = true;
+    this.wallMesh.castShadow = true;
+    this.wallMesh.receiveShadow = true;
+    this.floorMesh.castShadow = true;
+    this.floorMesh.receiveShadow = true;
+    this.sphereMesh.castShadow = true;
+    this.sphereMesh.receiveShadow = true;
 
     // Instances start at 0
-    wallMesh.count = 0; 
-    floorMesh.count = 0;
-    sphereMesh.count = 0;
+    this.wallMesh.count = 0; 
+    this.floorMesh.count = 0;
+    this.sphereMesh.count = 0;
 
     const matrix = new THREE.Matrix4();  
+    const lemonMatrix = new THREE.Matrix4();
     
     // Create the floor (y = 0) and scatter spheres
     for (let x = 0; x < this.size.width; x++) {
       for (let z = 0; z < this.size.width; z++) {
 
         let blockId = this.getBlock(x, 0, z).id
-        let instanceId = floorMesh.count;
+        let instanceId = this.floorMesh.count;
 
         if (blockId !== blocks.empty.id) {
           matrix.setPosition(x, 0, z);  
-          floorMesh.setMatrixAt(instanceId, matrix);  
+          this.floorMesh.setMatrixAt(instanceId, matrix);  
           this.setBlockInstanceId(x, 0, z, instanceId);
-          floorMesh.count++;
+          this.floorMesh.count++;
         }
     
         // default to 25% chance to place a sphere
@@ -142,12 +148,20 @@ export class World extends THREE.Group {
 
           // Check if the maze layout at this position is a path block
           if (this.mazeLayout[z][x] === 0) {
-              instanceId = sphereMesh.count;
+              instanceId = this.sphereMesh.count;
 
-              matrix.setPosition(x, 1, z);  
-              sphereMesh.setMatrixAt(instanceId, matrix);  
-              this.setBlockInstanceId(x, 1, z, instanceId);  
-              sphereMesh.count++;
+              lemonMatrix.setPosition(x, 1, z);  
+              this.sphereMesh.setMatrixAt(instanceId, lemonMatrix);  
+
+              // Update the block at y = 0 to represent a lemon
+              let blockBelow = this.getBlock(x, 0, z);
+              if (blockBelow) {
+                blockBelow.id = blocks.lemon.id;  // Set the block's ID to lemon
+                this.setBlockInstanceId(x, 1, z, instanceId);  // Track the instance ID
+            }
+            
+
+              this.sphereMesh.count++;
           } 
         }
       }
@@ -158,27 +172,27 @@ export class World extends THREE.Group {
       for (let x = 0; x < this.size.width; x++) {
 
         let blockId = this.getBlock(x, y, 0).id
-        let instanceId = wallMesh.count;
+        let instanceId = this.wallMesh.count;
 
         // Front wall (z = 0)
         if (blockId !== blocks.empty.id) {
 
           matrix.setPosition(x, y, 0);  
-          wallMesh.setMatrixAt(instanceId, matrix);
+          this.wallMesh.setMatrixAt(instanceId, matrix);
           this.setBlockInstanceId(x, y, 0, instanceId)
-          wallMesh.count++;
+          this.wallMesh.count++;
         }
 
         blockId = this.getBlock(x, y, this.size.width - 1).id
-        instanceId = wallMesh.count;
+        instanceId = this.wallMesh.count;
 
         // Back wall (z = width - 1)
         if (blockId !== blocks.empty.id) {
           
           matrix.setPosition(x, y, this.size.width - 1);  
-          wallMesh.setMatrixAt(instanceId, matrix);
+          this.wallMesh.setMatrixAt(instanceId, matrix);
           this.setBlockInstanceId(x, y, this.size.width - 1, instanceId)
-          wallMesh.count++
+          this.wallMesh.count++
         }
         
 
@@ -187,25 +201,25 @@ export class World extends THREE.Group {
       for (let z = 1; z < this.size.width - 1; z++) {  
 
         let blockId = this.getBlock(0, y, z)
-        let instanceId = wallMesh.count;
+        let instanceId = this.wallMesh.count;
         
         // Left wall (x = 0)
         if (blockId !== blocks.empty.id) {
           matrix.setPosition(0, y, z);  
-          wallMesh.setMatrixAt(instanceId, matrix);
+          this.wallMesh.setMatrixAt(instanceId, matrix);
           this.setBlockInstanceId(0, y, z, instanceId)
-          wallMesh.count++
+          this.wallMesh.count++
         }
 
         blockId = this.getBlock(this.size.width - 1, y, z).id
-        instanceId = wallMesh.count;
+        instanceId = this.wallMesh.count;
 
         // Right wall (x = width - 1)
         if (blockId !== blocks.empty.id) {
           matrix.setPosition(this.size.width - 1, y, z);  
-          wallMesh.setMatrixAt(instanceId, matrix);
+          this.wallMesh.setMatrixAt(instanceId, matrix);
           this.setBlockInstanceId(0, y, z, instanceId)
-          wallMesh.count++
+          this.wallMesh.count++
         }
       }
     }
@@ -214,11 +228,11 @@ export class World extends THREE.Group {
     // this.mazeLayout = this.generateMazeLayout(this.size.width);
 
     // Maze creation
-    this.createMaze(wallMesh, matrix);
+    this.createMaze(this.wallMesh, matrix);
 
-    this.add(floorMesh);
-    this.add(wallMesh);
-    this.add(sphereMesh);
+    this.add(this.floorMesh);
+    this.add(this.wallMesh);
+    this.add(this.sphereMesh);
    
   };
 
@@ -292,7 +306,7 @@ export class World extends THREE.Group {
 
                     // Place the maze wall block visually
                     matrix.setPosition(x, y, z); 
-                    wallMesh.setMatrixAt(wallMesh.count++, matrix);
+                    this.wallMesh.setMatrixAt(this.wallMesh.count++, matrix);
                 }
             }
         }
@@ -329,4 +343,32 @@ export class World extends THREE.Group {
       }
   };
 
+  // Method to handle lemon collection
+  onLemonCollected(x, y, z) {
+    const floorBlock = this.getBlock(x, y, z);
+    const blockWithLemon = this.getBlock(x, y + 1, z);
+    console.log(`FLoor block id: ${floorBlock.id}`)
+    console.log(`Lemon Block id: ${blockWithLemon.id}`)
+    if (blockWithLemon && blockWithLemon.id === blocks.empty.id) {
+      const instanceId = blockWithLemon.instanceId;
+      
+      if (instanceId !== null) {
+          console.log(`Starting IDs - Floor: ${floorBlock.id} and Lemon Block: ${blockWithLemon.id}`);
+          console.log(`Lemon Collected at (${x}, ${y + 1}, ${z})`);
+          
+          // Update the floor block to no longer indicate a lemon is above it
+          floorBlock.id = blocks.floor.id;
+          console.log(`Ending IDs - Floor: ${floorBlock.id} and Lemon Block: ${blockWithLemon.id}`);
+
+          // Move the lemon sphere below the floor (y = -1) to hide it
+          const hiddenMatrix = new THREE.Matrix4().setPosition(x, -1, z);
+          this.sphereMesh.setMatrixAt(instanceId, hiddenMatrix);  // Apply the matrix to move the lemon
+          this.sphereMesh.instanceMatrix.needsUpdate = true;  // Notify Three.js to update the mesh
+
+          // Mark the air block as empty and clear the instance ID
+          blockWithLemon.id = blocks.empty.id;  // Set the block ID to empty
+          blockWithLemon.instanceId = null;  // Clear the instance ID
+      }
+  }
+  }
 }

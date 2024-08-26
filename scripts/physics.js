@@ -35,7 +35,7 @@ export class Physics {
 
   detectCollisions(player, world) {
     const candidates = this.broadPhase(player, world);
-    const collisions = this.narrowPhase(candidates, player);
+    const collisions = this.narrowPhase(candidates, player, world);
 
     if (collisions.length > 0) {
       this.resolveCollisions(collisions, player);
@@ -71,6 +71,13 @@ export class Physics {
             const blockPos = { x, y, z }
             candidates.push({ position: blockPos, id: block.id })
 
+          //   if (block.id === blocks.lemon.id) {
+              
+          //     // Trigger the visual update to remove the lemon
+          //     // Floor block that has a lemon above it
+          //     world.onLemonCollected(x, y, z);
+          // }
+
             this.addCollisionHelper(blockPos)
           }
         };
@@ -82,7 +89,7 @@ export class Physics {
     return candidates;
   }
 
-  narrowPhase(candidates, player){
+  narrowPhase(candidates, player, world){
     const collisions = [];
 
     for (const block of candidates) {
@@ -120,6 +127,13 @@ export class Physics {
           normal,
           overlap
         });
+
+        if (block.id === blocks.lemon.id) {
+              
+          // Trigger the visual update to remove the lemon
+          // Floor block that has a lemon above it
+          world.onLemonCollected(block.position.x, block.position.y, block.position.z);
+      }
 
         this.addContactPointHelper(closestPoint)
         // Debugging log
@@ -172,4 +186,5 @@ export class Physics {
     return (Math.abs(deltaY) < player.height / 2) && (radiusSqd < player.radius**2)
 
   }
+  
 }
