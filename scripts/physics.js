@@ -19,7 +19,7 @@ export class Physics {
   simulationRate = 200;
   timeStep = 1 / this.simulationRate;
   accumulator = 0;
-  gravity = 25;
+  gravity = 32;
 
   constructor(scene) {
     this.helpers = new THREE.Group();
@@ -79,7 +79,7 @@ export class Physics {
             candidates.push({ position: blockPos, id: block.id })
 
           //   if (block.id === blocks.lemon.id) {
-              
+
           //     // Trigger the visual update to remove the lemon
           //     // Floor block that has a lemon above it
           //     world.onLemonCollected(x, y, z);
@@ -90,9 +90,9 @@ export class Physics {
         };
       };
     };
-    
+
       // console.log(`Total Collision Candidates: ${candidates.length}`)
-    
+
     return candidates;
   }
 
@@ -137,7 +137,7 @@ export class Physics {
         });
 
         if (block.id === blocks.lemon.id) {
-              
+
           // Trigger the visual update to remove the lemon
           // Floor block that has a lemon above it
           world.onLemonCollected(block.position.x, block.position.y, block.position.z);
@@ -145,12 +145,12 @@ export class Physics {
 
         this.addContactPointHelper(closestPoint)
         // Debugging log
-       
+
           // console.log(`Narrowphase Collisions: ${collisions.length} block-id ${block.id}`);
           // console.log(`Collision Block pos ${ block.position.x }, ${ block.position.y }, ${ block.position.z }`)
       }
 
-      
+
 
     }
 
@@ -178,11 +178,11 @@ export class Physics {
 
       // Push player away from the block the way of the collision just enough to remove overlap
       player.position.add(deltaPosition);
-      
+
       let magnitude = player.worldVelocity.dot(collision.normal);
-      
+
       let velocityAdjustment = collision.normal.clone().multiplyScalar(magnitude)
-      
+
       player.applyWorldDeltaVelocity(velocityAdjustment.negate())
     }
   }
@@ -210,5 +210,5 @@ export class Physics {
     return (Math.abs(deltaY) < player.height / 2) && (radiusSqd < player.radius**2)
 
   }
-  
+
 }
