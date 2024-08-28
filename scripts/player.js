@@ -7,21 +7,30 @@ export class Player {
   height = 1.5
   maxSpeed = 3.5
   jumpSpeed = 7;
+  score = 0
   onGround = false;
   input = new THREE.Vector3();
   velocity = new THREE.Vector3();
   #worldVelocity = new THREE.Vector3();
 
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5,);
   controls = new PointerLockControls(this.camera, document.body)
   
   cameraHelper = new THREE.CameraHelper(this.camera)
 
-  constructor(scene) {    
-    this.position.set(13, 4, 11);
-    this.camera.lookAt(13, 3, 25)
+  constructor(scene) {   
+    // Adding a flashlight (SpotLight)
+    this.flashlight = new THREE.SpotLight(0xffffff, 20, 10, .75, 0.5, 2);
+    this.flashlight.position.set(0, 0, 0); // Flashlight will follow the camera
+    this.flashlight.target.position.set(0, 0, -1); // Light direction
+    this.camera.add(this.flashlight);
+    this.camera.add(this.flashlight.target);
+
+    scene.add(this.camera); 
+    this.position.set(13, 2.2, 11);
+    this.camera.lookAt(13, 2.01, 25)
     scene.add(this.camera);
-    scene.add(this.cameraHelper);
+    // scene.add(this.cameraHelper);
 
     document.addEventListener('keydown', this.onKeyDown.bind(this));
     document.addEventListener('keyup', this.onKeyUp.bind(this));
@@ -31,7 +40,7 @@ export class Player {
       new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
       new THREE.MeshBasicMaterial({wireframe: true})
     );
-    scene.add(this.boundsHelper);
+    // scene.add(this.boundsHelper);
   }
 
   get worldVelocity() {
@@ -92,7 +101,7 @@ export class Player {
         this.input.y = -this.maxSpeed;
         break;
       case 'KeyR':
-        this.position.set(15, 10, 15);
+        this.position.set(13, 2.01, 11);
         this.velocity.set(0, 0, 0)
         break;
       case 'Space':
