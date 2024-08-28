@@ -150,7 +150,7 @@ export class World extends THREE.Group {
           if (this.mazeLayout[z][x] === 0) {
               instanceId = this.sphereMesh.count;
 
-              lemonMatrix.setPosition(x, 1, z);  
+              lemonMatrix.setPosition(x, 1.25, z);  
               this.sphereMesh.setMatrixAt(instanceId, lemonMatrix);  
 
               // Update the block at y = 0 to represent a lemon
