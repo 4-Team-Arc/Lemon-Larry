@@ -13,14 +13,14 @@ export class Player {
   velocity = new THREE.Vector3();
   #worldVelocity = new THREE.Vector3();
 
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5,);
   controls = new PointerLockControls(this.camera, document.body)
   
   cameraHelper = new THREE.CameraHelper(this.camera)
 
   constructor(scene) {   
     // Adding a flashlight (SpotLight)
-    this.flashlight = new THREE.SpotLight(0xffffff, 10, 10, .75, 0.5);
+    this.flashlight = new THREE.SpotLight(0xffffff, 20, 10, .75, 0.5, 2);
     this.flashlight.position.set(0, 0, 0); // Flashlight will follow the camera
     this.flashlight.target.position.set(0, 0, -1); // Light direction
     this.camera.add(this.flashlight);
