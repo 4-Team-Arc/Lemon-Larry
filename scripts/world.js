@@ -4,8 +4,8 @@ import { blocks } from './blocks';
 const geometry = new THREE.BoxGeometry();
 const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); 
 
-const wallMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
-const floorMaterial = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
+const wallMaterial = new THREE.MeshLambertMaterial({color: 0x302f30});
+const floorMaterial = new THREE.MeshLambertMaterial({color: 0x080000});
 const lemonMaterial = new THREE.MeshStandardMaterial({
 
   color: 0xFFFF00, 
@@ -236,56 +236,6 @@ export class World extends THREE.Group {
    
   };
 
-  
-  // Recursive backtracking to generate a maze based on new world size
-  generateMazeLayout = (size) => {
-    
-      // Initialize the maze with walls (1)
-      const maze = Array.from({ length: size }, () => Array(size).fill(1));
-    
-    
-    const carvePath = (x, z) => {
-
-      // Possible directions to move
-      const directions = [
-        [0, 2],  // Down
-        [0, -2], // Up
-        [2, 0],  // Right
-        [-2, 0]  // Left
-      ];
-  
-      // Shuffle directions to ensure random path generation
-      directions.sort(() => Math.random() - 0.5);
-  
-      //  for each possible direction
-      for (const [changeInx, changeInz] of directions) {
-
-        // apply that change in direction to current position to get new position
-        const newX = x + changeInx;
-        const newZ = z + changeInz;
-
-        //  if the new x and z are within the boundry  and the new position is a wall
-        if (newX > 0 && newX < size - 1 && newZ > 0 && newZ < size - 1 && maze[newZ][newX] === 1) {
-  
-          //  create the path
-          maze[newZ][newX] = 0; 
-
-          //  connect old path block to new path block by changing the block between them a 0
-          maze[z + changeInz / 2][x + changeInx / 2] = 0; 
-
-          //  Recursively carve out the next path
-          carvePath(newX, newZ); 
-        }
-      }
-    };
-  
-    // Start carving from (1, 1)
-    maze[1][1] = 0;
-    carvePath(1, 1);
-  
-    return maze;
-  };
-
   createMaze = (wallMesh, matrix) => {
 
     // Loop through the maze layout array
@@ -344,7 +294,7 @@ export class World extends THREE.Group {
   };
 
   // Method to handle lemon collection
-  onLemonCollected(x, y, z) {
+  onLemonCollected(x, y, z, player) {
     const floorBlock = this.getBlock(x, y, z);
     const blockWithLemon = this.getBlock(x, y + 1, z);
     console.log(`FLoor block id: ${floorBlock.id}`)
@@ -355,6 +305,11 @@ export class World extends THREE.Group {
       if (instanceId !== null) {
           console.log(`Starting IDs - Floor: ${floorBlock.id} and Lemon Block: ${blockWithLemon.id}`);
           console.log(`Lemon Collected at (${x}, ${y + 1}, ${z})`);
+          player.score += 13;
+          console.log(`Score = ${player.score}`)
+
+          // Update the score display directly
+          window.scoreDisplay.textContent = `Score: ${player.score}`;
           
           // Update the floor block to no longer indicate a lemon is above it
           floorBlock.id = blocks.floor.id;
@@ -371,4 +326,5 @@ export class World extends THREE.Group {
       }
   }
   }
+  
 }

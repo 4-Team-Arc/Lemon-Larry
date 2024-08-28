@@ -30,14 +30,36 @@ export class Physics {
     this.accumulator += changeInTime;
 
     while (this.accumulator >= this.timeStep) {
-      this.helpers.clear()
-      player.velocity.y -= this.gravity * this.timeStep
-      player.applyInputs(this.timeStep)
-      player.updateBoundsHelper();
-      this.detectCollisions(player, world);
-      this.accumulator -= this.timeStep;
-  }
-  }
+        this.helpers.clear();
+
+        // Apply gravity
+        player.velocity.y -= this.gravity * this.timeStep;
+
+        // Apply player inputs (e.g., movement, jumping)
+        player.applyInputs(this.timeStep);
+
+        // Update the player's bounds helper
+        player.updateBoundsHelper();
+
+        // Check if the player is on the ground and correct their position if necessary
+        const groundLevel = 1.9; // Adjust this value based on your game's ground level
+
+        if (player.position.y <= groundLevel) {
+            // If player is below or at ground level, reset their vertical velocity
+            player.velocity.y = 0;
+            player.position.y = groundLevel+ 0.01;
+            player.onGround = true; // Ensure the player is considered on the ground
+        } else {
+            // If the player is above ground, allow gravity to continue affecting them
+            player.onGround = false;
+        }
+
+        // Detect collisions (this should happen after position corrections)
+        this.detectCollisions(player, world);
+
+        this.accumulator -= this.timeStep;
+    }
+}
 
   detectCollisions(player, world) {
     player.onGround = false;
@@ -140,7 +162,7 @@ export class Physics {
               
           // Trigger the visual update to remove the lemon
           // Floor block that has a lemon above it
-          world.onLemonCollected(block.position.x, block.position.y, block.position.z);
+          world.onLemonCollected(block.position.x, block.position.y, block.position.z, player);
       }
 
         // this.addContactPointHelper(closestPoint)
