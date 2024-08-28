@@ -85,7 +85,7 @@ export class Physics {
           //     world.onLemonCollected(x, y, z);
           // }
 
-            this.addCollisionHelper(blockPos)
+            // this.addCollisionHelper(blockPos)
           }
         };
       };
@@ -143,7 +143,7 @@ export class Physics {
           world.onLemonCollected(block.position.x, block.position.y, block.position.z);
       }
 
-        this.addContactPointHelper(closestPoint)
+        // this.addContactPointHelper(closestPoint)
         // Debugging log
        
           // console.log(`Narrowphase Collisions: ${collisions.length} block-id ${block.id}`);
