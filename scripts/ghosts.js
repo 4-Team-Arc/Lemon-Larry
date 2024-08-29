@@ -102,7 +102,7 @@ export class Ghost {
     const direction = targetWorldPos.clone().sub(this.mesh.position).normalize();
     
     // Determine the ghost's movement speed
-    const moveSpeed = this.player.maxSpeed / 150; // Adjust speed as needed
+    const moveSpeed = this.player.maxSpeed / 300; // Adjust speed as needed
     
     // Calculate the distance to the target position
     const distance = this.mesh.position.distanceTo(targetWorldPos);
