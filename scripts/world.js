@@ -45,11 +45,20 @@ export class World extends THREE.Group {
   floorMesh = null;
   wallMesh = null;
 
-  constructor(size = { width: 30, wallHeight: 3 }, mazeLayout) { 
+  constructor(size = { width: 30, wallHeight: 3 }, mazeLayout, listener) { 
     super();
     this.size = size;
     this.mazeLayout = mazeLayout;
     this.sphereChance = 25;
+    this.listener = listener;  // Store the listener for use in this class
+    this.audioLoader = new THREE.AudioLoader();
+
+    // Load the lemon collection sound
+    this.lemonSound = new THREE.Audio(this.listener);
+    this.audioLoader.load('../coinSound.mp3', (buffer) => {
+        this.lemonSound.setBuffer(buffer);
+        this.lemonSound.setVolume(0.7);  // Adjust the volume
+    });
   }
 
   /**
@@ -310,23 +319,22 @@ export class World extends THREE.Group {
   onLemonCollected(x, y, z, player) {
     const floorBlock = this.getBlock(x, y, z);
     const blockWithLemon = this.getBlock(x, y + 1, z);
-    console.log(`FLoor block id: ${floorBlock.id}`)
-    console.log(`Lemon Block id: ${blockWithLemon.id}`)
     if (blockWithLemon && blockWithLemon.id === blocks.empty.id) {
       const instanceId = blockWithLemon.instanceId;
       
       if (instanceId !== null) {
-          console.log(`Starting IDs - Floor: ${floorBlock.id} and Lemon Block: ${blockWithLemon.id}`);
-          console.log(`Lemon Collected at (${x}, ${y + 1}, ${z})`);
+        if (this.lemonSound.isPlaying) {
+          this.lemonSound.stop(); // Stop if it's already playing to restart it
+        }
+        this.lemonSound.play(); 
           player.score += 13;
-          console.log(`Score = ${player.score}`)
 
           // Update the score display directly
           window.scoreDisplay.textContent = `Score: ${player.score}`;
           
           // Update the floor block to no longer indicate a lemon is above it
           floorBlock.id = blocks.floor.id;
-          console.log(`Ending IDs - Floor: ${floorBlock.id} and Lemon Block: ${blockWithLemon.id}`);
+          
 
           // Move the lemon sphere below the floor (y = -1) to hide it
           const hiddenMatrix = new THREE.Matrix4().setPosition(x, -1, z);
