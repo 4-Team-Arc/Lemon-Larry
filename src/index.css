@@ -129,7 +129,8 @@ a{
 
 .forgot-password:hover,
 .toggle-link:hover {
-  text-shadow:  5vh 5vh 3vh white;
+  text-shadow:  2vh -1vh 4px rgb(255, 0, 0);
+  color:white;
 }
 
 p{
