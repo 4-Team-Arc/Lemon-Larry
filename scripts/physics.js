@@ -21,23 +21,49 @@ export class Physics {
   accumulator = 0;
   gravity = 32;
 
-  constructor(scene) {
+  constructor(scene, ghosts, world) {
     this.helpers = new THREE.Group();
     scene.add(this.helpers)
+    this.ghosts = ghosts
   }
 
   update(changeInTime, player, world) {
     this.accumulator += changeInTime;
 
     while (this.accumulator >= this.timeStep) {
-      this.helpers.clear()
-      player.velocity.y -= this.gravity * this.timeStep
-      player.applyInputs(this.timeStep)
-      player.updateBoundsHelper();
-      this.detectCollisions(player, world);
-      this.accumulator -= this.timeStep;
-  }
-  }
+        this.helpers.clear();
+
+        // Apply gravity
+        player.velocity.y -= this.gravity * this.timeStep;
+
+        // Apply player inputs (e.g., movement, jumping)
+        player.applyInputs(this.timeStep);
+
+        // Update the player's bounds helper
+        player.updateBoundsHelper();
+
+        // Check if the player is on the ground and correct their position if necessary
+        const groundLevel = 1.9; // Adjust this value based on your game's ground level
+
+        if (player.position.y <= groundLevel) {
+            // If player is below or at ground level, reset their vertical velocity
+            player.velocity.y = 0;
+            player.position.y = groundLevel+ 0.01;
+            player.onGround = true; // Ensure the player is considered on the ground
+        } else {
+            // If the player is above ground, allow gravity to continue affecting them
+            player.onGround = false;
+        }
+
+        // Detect collisions (this should happen after position corrections)
+        this.detectCollisions(player, world);
+
+        // Detect collisions with ghosts
+        this.detectGhostCollisions(player, world);
+
+        this.accumulator -= this.timeStep;
+    }
+}
 
   detectCollisions(player, world) {
     player.onGround = false;
@@ -85,7 +111,7 @@ export class Physics {
           //     world.onLemonCollected(x, y, z);
           // }
 
-            this.addCollisionHelper(blockPos)
+            // this.addCollisionHelper(blockPos)
           }
         };
       };
@@ -140,10 +166,10 @@ export class Physics {
 
           // Trigger the visual update to remove the lemon
           // Floor block that has a lemon above it
-          world.onLemonCollected(block.position.x, block.position.y, block.position.z);
+          world.onLemonCollected(block.position.x, block.position.y, block.position.z, player);
       }
 
-        this.addContactPointHelper(closestPoint)
+        // this.addContactPointHelper(closestPoint)
         // Debugging log
 
           // console.log(`Narrowphase Collisions: ${collisions.length} block-id ${block.id}`);
@@ -186,6 +212,60 @@ export class Physics {
       player.applyWorldDeltaVelocity(velocityAdjustment.negate())
     }
   }
+
+  detectGhostCollisions(player, world) {
+    this.ghosts.forEach((ghost) => {
+        const distance = player.position.distanceTo(ghost.mesh.position);
+
+        // Set a collision threshold based on your models' sizes
+        const collisionThreshold = 1.0;
+
+        if (distance < collisionThreshold) {
+            this.handlePlayerDeath(player, world);
+        }
+    });
+  }
+
+  handlePlayerDeath(player, world) {
+    // Prevent repeated death handling
+    if (player.isDead) return;
+    player.isDead = true; // Set a flag to indicate the player has died
+
+    // Disable player controls
+    player.disableControls(); 
+
+    // Exit pointer lock to release the mouse cursor
+    if (document.pointerLockElement) {
+        document.exitPointerLock();
+    }
+
+    // Show the "You Died" popup
+    player.youDiedText.style.display = 'block';
+    player.youDiedText.style.cursor = 'pointer'; // Set cursor to pointer for the popup
+
+    console.log('Game Over');
+
+    // Play death sounds using the world's listener
+    const deathSound = new THREE.Audio(world.listener); // Attach the sound to the world's listener
+
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('../deep-evil-laugh.mp3', function(buffer) {
+        deathSound.setBuffer(buffer);
+        deathSound.setVolume(0.8);
+        deathSound.play();
+    });
+
+    // Ensure the event listener is only added once
+    if (!player.youDiedText.hasAttribute('data-restart-bound')) {
+        player.youDiedText.addEventListener('click', () => {
+            window.location.reload(); // Simple way to restart the game
+        });
+
+        // Mark that the event listener has been added
+        player.youDiedText.setAttribute('data-restart-bound', 'true');
+    }
+}
+
 
   addCollisionHelper(block) {
     const blockMesh = new THREE.Mesh(collisionGeometry, collisionMaterial);

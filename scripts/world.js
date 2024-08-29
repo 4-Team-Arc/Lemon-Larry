@@ -2,16 +2,28 @@ import * as THREE from 'three';
 import { blocks } from './blocks';
 
 const geometry = new THREE.BoxGeometry();
-const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); 
+const sphereGeometry = new THREE.SphereGeometry(0.1, 8, 8); 
 
-const wallMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
-const floorMaterial = new THREE.MeshLambertMaterial({color: 0xaaaaaa});
-const lemonMaterial = new THREE.MeshStandardMaterial({
+const textureLoader = new THREE.TextureLoader();
+const wallTexture = textureLoader.load('../images/metal_wall.jpg');
+const floorTexture = textureLoader.load('../images/metal_floor.jpg');
+const lemonTexture = textureLoader.load('../images/lemon.jpg');
+
+
+const wallMaterial = new THREE.MeshLambertMaterial({
+  color: 0x302f30, 
+  reflectivity: 0, 
+  map: wallTexture
+});
+const floorMaterial = new THREE.MeshLambertMaterial({
+  color: 0x523c2c,
+  map: floorTexture,
+});
+const lemonMaterial = new THREE.MeshLambertMaterial({
 
   color: 0xFFFF00, 
-  bumpScale: 0.7,
-  roughness: 0.99, 
-  metalness: 0.0  
+  map: lemonTexture,
+  reflectivity: 0
 }); 
 
 
@@ -32,11 +44,20 @@ export class World extends THREE.Group {
   floorMesh = null;
   wallMesh = null;
 
-  constructor(size = { width: 30, wallHeight: 3 }, mazeLayout) { 
+  constructor(size = { width: 30, wallHeight: 3 }, mazeLayout, listener) { 
     super();
     this.size = size;
     this.mazeLayout = mazeLayout;
     this.sphereChance = 25;
+    this.listener = listener;  // Store the listener for use in this class
+    this.audioLoader = new THREE.AudioLoader();
+
+    // Load the lemon collection sound
+    this.lemonSound = new THREE.Audio(this.listener);
+    this.audioLoader.load('../coinSound.mp3', (buffer) => {
+        this.lemonSound.setBuffer(buffer);
+        this.lemonSound.setVolume(0.7);  // Adjust the volume
+    });
   }
 
   /**
@@ -150,7 +171,7 @@ export class World extends THREE.Group {
           if (this.mazeLayout[z][x] === 0) {
               instanceId = this.sphereMesh.count;
 
-              lemonMatrix.setPosition(x, 1, z);  
+              lemonMatrix.setPosition(x, 1.25, z);  
               this.sphereMesh.setMatrixAt(instanceId, lemonMatrix);  
 
               // Update the block at y = 0 to represent a lemon
@@ -236,56 +257,6 @@ export class World extends THREE.Group {
    
   };
 
-  
-  // Recursive backtracking to generate a maze based on new world size
-  generateMazeLayout = (size) => {
-    
-      // Initialize the maze with walls (1)
-      const maze = Array.from({ length: size }, () => Array(size).fill(1));
-    
-    
-    const carvePath = (x, z) => {
-
-      // Possible directions to move
-      const directions = [
-        [0, 2],  // Down
-        [0, -2], // Up
-        [2, 0],  // Right
-        [-2, 0]  // Left
-      ];
-  
-      // Shuffle directions to ensure random path generation
-      directions.sort(() => Math.random() - 0.5);
-  
-      //  for each possible direction
-      for (const [changeInx, changeInz] of directions) {
-
-        // apply that change in direction to current position to get new position
-        const newX = x + changeInx;
-        const newZ = z + changeInz;
-
-        //  if the new x and z are within the boundry  and the new position is a wall
-        if (newX > 0 && newX < size - 1 && newZ > 0 && newZ < size - 1 && maze[newZ][newX] === 1) {
-  
-          //  create the path
-          maze[newZ][newX] = 0; 
-
-          //  connect old path block to new path block by changing the block between them a 0
-          maze[z + changeInz / 2][x + changeInx / 2] = 0; 
-
-          //  Recursively carve out the next path
-          carvePath(newX, newZ); 
-        }
-      }
-    };
-  
-    // Start carving from (1, 1)
-    maze[1][1] = 0;
-    carvePath(1, 1);
-  
-    return maze;
-  };
-
   createMaze = (wallMesh, matrix) => {
 
     // Loop through the maze layout array
@@ -344,21 +315,25 @@ export class World extends THREE.Group {
   };
 
   // Method to handle lemon collection
-  onLemonCollected(x, y, z) {
+  onLemonCollected(x, y, z, player) {
     const floorBlock = this.getBlock(x, y, z);
     const blockWithLemon = this.getBlock(x, y + 1, z);
-    console.log(`FLoor block id: ${floorBlock.id}`)
-    console.log(`Lemon Block id: ${blockWithLemon.id}`)
     if (blockWithLemon && blockWithLemon.id === blocks.empty.id) {
       const instanceId = blockWithLemon.instanceId;
       
       if (instanceId !== null) {
-          console.log(`Starting IDs - Floor: ${floorBlock.id} and Lemon Block: ${blockWithLemon.id}`);
-          console.log(`Lemon Collected at (${x}, ${y + 1}, ${z})`);
+        if (this.lemonSound.isPlaying) {
+          this.lemonSound.stop(); // Stop if it's already playing to restart it
+        }
+        this.lemonSound.play(); 
+          player.score += 13;
+
+          // Update the score display directly
+          window.scoreDisplay.textContent = `Score: ${player.score}`;
           
           // Update the floor block to no longer indicate a lemon is above it
           floorBlock.id = blocks.floor.id;
-          console.log(`Ending IDs - Floor: ${floorBlock.id} and Lemon Block: ${blockWithLemon.id}`);
+          
 
           // Move the lemon sphere below the floor (y = -1) to hide it
           const hiddenMatrix = new THREE.Matrix4().setPosition(x, -1, z);
@@ -371,4 +346,5 @@ export class World extends THREE.Group {
       }
   }
   }
+  
 }
