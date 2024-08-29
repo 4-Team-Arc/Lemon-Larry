@@ -90,34 +90,34 @@ export class Ghost {
     } else {
         this.targetPosition = null; // No valid path found, clear the target
     }
-  }
-
-  moveTowardsTarget() {
-    if (!this.targetPosition) return; // If there's no target, do nothing
-
-    // Convert the target grid position to world coordinates
-    const targetWorldPos = new THREE.Vector3(this.targetPosition.x, this.mesh.position.y, this.targetPosition.y);
-    
-    // Calculate the direction vector towards the target position
-    const direction = targetWorldPos.clone().sub(this.mesh.position).normalize();
-    
-    // Determine the ghost's movement speed
-    const moveSpeed = this.player.maxSpeed / 150; // Adjust speed as needed
-    
-    // Calculate the distance to the target position
-    const distance = this.mesh.position.distanceTo(targetWorldPos);
-
-    // Move the ghost towards the target, but not farther than the distance to the target
-    const stepDistance = Math.min(moveSpeed, distance);
-
-    if (distance > 0.01) { // A small buffer to prevent clipping issues
-        this.mesh.position.add(direction.multiplyScalar(stepDistance)); // Move towards target
-    } else {
-        // Snap to the target position if close enough
-        this.mesh.position.copy(targetWorldPos);
-        this.position = { x: this.targetPosition.x, y: this.targetPosition.y };
-        this.targetPosition = null; // Target reached, clear it
-        this.calculateNewPath(); // Immediately calculate a new path after reaching the target
     }
-  }
+
+    moveTowardsTarget() {
+        if (!this.targetPosition) return; // If there's no target, do nothing
+
+        // Convert the target grid position to world coordinates
+        const targetWorldPos = new THREE.Vector3(this.targetPosition.x, this.mesh.position.y, this.targetPosition.y);
+        
+        // Calculate the direction vector towards the target position
+        const direction = targetWorldPos.clone().sub(this.mesh.position).normalize();
+        
+        // Determine the ghost's movement speed
+        const moveSpeed = this.player.maxSpeed / 150; // Adjust speed as needed
+        
+        // Calculate the distance to the target position
+        const distance = this.mesh.position.distanceTo(targetWorldPos);
+
+        // Move the ghost towards the target, but not farther than the distance to the target
+        const stepDistance = Math.min(moveSpeed, distance);
+
+        if (distance > 0.01) { // A small buffer to prevent clipping issues
+            this.mesh.position.add(direction.multiplyScalar(stepDistance)); // Move towards target
+        } else {
+            // Snap to the target position if close enough
+            this.mesh.position.copy(targetWorldPos);
+            this.position = { x: this.targetPosition.x, y: this.targetPosition.y };
+            this.targetPosition = null; // Target reached, clear it
+            this.calculateNewPath(); // Immediately calculate a new path after reaching the target
+        }
+    }
 }

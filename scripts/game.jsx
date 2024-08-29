@@ -18,6 +18,7 @@ const GameScene = () => {
   // document.body.append(stats.dom);
 
   let gameState = 'notStarted'; // Possible states: 'notStarted', 'running', 'paused', 'gameOver'
+  const listener = new THREE.AudioListener();
 
 
   // Renderer Setup
@@ -187,7 +188,7 @@ const GameScene = () => {
 
   //Scene setup
   const scene = new THREE.Scene();;
-  const world = new World({ width: 30, wallHeight: 3 }, mazes.maze0);
+  const world = new World({ width: 30, wallHeight: 3 }, mazes.maze0, listener);
   world.generateBlocks();
   world.generateMeshes();
   scene.add(world);
@@ -256,19 +257,21 @@ const GameScene = () => {
   const axesHelper = new THREE.AxesHelper( 500 );
   // scene.add( axesHelper );
 
-  const listener = new THREE.AudioListener();
+  
   scene.add(listener);
-  // Create a global audio source and attach it to the listener
-  const sound = new THREE.Audio(listener);
 
-    // Load a sound and set it as the Audio object's buffer
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load('../Ambience.mp3', function(buffer) {
-    sound.setBuffer(buffer);
-    sound.setLoop(true); // Loop the sound
-    sound.setVolume(0.5); // Set the volume
-    sound.play(); // Play the sound
+  // Create a global audio source and attach it to the listener
+  const backgroundSound = new THREE.Audio(listener);
+
+  // Load a backgroundSound and set it as the Audio object's buffer
+  const audioLoader = new THREE.AudioLoader();
+  audioLoader.load('../Ambience.mp3', function(buffer) {
+  backgroundSound.setBuffer(buffer);
+  backgroundSound.setLoop(true); // Loop the backgroundSound
+  backgroundSound.setVolume(0.5); // Set the volume
+  backgroundSound.play(); // Play the backgroundSound
 });
+
 
 
   // Light setup
@@ -343,9 +346,9 @@ const animate = () => {
   return () => {
     window.removeEventListener('resize', handleResize);
 
-    // Stop the sound if it's playing
-    if (sound.isPlaying) {
-      sound.stop();
+    // Stop the backgroundSound if it's playing
+    if (backgroundSound.isPlaying) {
+      backgroundSound.stop();
     } 
 
     if (containerRef.current) {
