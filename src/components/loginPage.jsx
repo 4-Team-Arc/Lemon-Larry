@@ -40,7 +40,7 @@ const RegisterLogin = () => {
     } else {
       // Login API call
       try {
-        const response = await axios.post("/api/v1/auth/login", {
+        const response = await axios.post("/api/v1/users/login", {
           username: formData.username,
           password: formData.password
         });
