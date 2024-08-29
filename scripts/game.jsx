@@ -194,12 +194,13 @@ const GameScene = () => {
   scene.add(world);
 
   const player = new Player(scene, containerRef);
-  const physics = new Physics(scene)
   const ghost = new Ghost(scene, mazes.maze0, player, 1, 1);
   const ghost1 = new Ghost(scene, mazes.maze0, player, 29, 1);
-  const ghost2 = new Ghost(scene, mazes.maze0, player, 1, 29);
-  const ghost3 = new Ghost(scene, mazes.maze0, player, 29, 28);
-
+  // const ghost2 = new Ghost(scene, mazes.maze0, player, 1, 29);
+  // const ghost3 = new Ghost(scene, mazes.maze0, player, 29, 28);
+  let ghosts = [ghost, ghost1]
+  
+  const physics = new Physics(scene, ghosts, world)
   const startButton = document.createElement('button');
     startButton.textContent = 'Start Game';
     startButton.style.position = 'absolute';
@@ -212,7 +213,18 @@ const GameScene = () => {
     startButton.style.background = 'linear-gradient(to bottom, #ff0000, black)';
     startButton.style.border = '2px solid #000'; 
     startButton.style.color = '#fff'; 
-    startButton.style.boxShadow = '0px 0px 30px rgba(255, 0, 0, 1)'; 
+    startButton.style.boxShadow = '0px 0px 30px rgba(255, 0, 0, .8)'; 
+    
+    // Add hover effect
+    startButton.addEventListener('mouseover', () => {
+  startButton.style.boxShadow = '0px 0px 50px rgba(255, 0, 0, 1)'; 
+  startButton.style.color = '#000000';
+});
+
+startButton.addEventListener('mouseout', () => {
+  startButton.style.boxShadow = '0px 0px 30px rgba(255, 0, 0, .8)'; 
+  startButton.style.color = '#fff';
+});
 
     containerRef.current.appendChild(startButton);
 
@@ -231,6 +243,7 @@ const GameScene = () => {
     scoreDisplay.style.padding = '10px';
     scoreDisplay.style.fontSize = '48px';
     scoreDisplay.style.color = '#fff';
+    scoreDisplay.style.cursor = 'default';
     scoreDisplay.style.background = 'rgba(0, 0, 0, 0.5)'; // Semi-transparent background
     scoreDisplay.style.border = '2px solid #ff0000'; 
     scoreDisplay.style.borderRadius = '5px'; // Rounded corners

@@ -13,7 +13,6 @@ const lemonTexture = textureLoader.load('../images/lemon.jpg');
 const wallMaterial = new THREE.MeshLambertMaterial({
   color: 0x302f30, 
   reflectivity: 0, 
-  specular: 0x111111,
   map: wallTexture
 });
 const floorMaterial = new THREE.MeshLambertMaterial({
