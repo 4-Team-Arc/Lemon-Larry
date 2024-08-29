@@ -27,7 +27,7 @@ const RegisterLogin = () => {
     if (isRegister) {
       // Registration API call
       try {
-        const response = await axios.post("/api/users", {
+        const response = await axios.post("/api/v1/users", {
           email: formData.email,
           username: formData.username,
           password: formData.password
@@ -40,7 +40,7 @@ const RegisterLogin = () => {
     } else {
       // Login API call
       try {
-        const response = await axios.post("/api/auth/login", {
+        const response = await axios.post("/api/v1/auth/login", {
           username: formData.username,
           password: formData.password
         });
@@ -59,7 +59,7 @@ const RegisterLogin = () => {
           <div>
             <h1>Register</h1>
             <hr></hr>
-            <h2>Create a new account</h2>
+            <h2>Become a Legend!</h2>
             <form className="register-form" onSubmit={formSubmit}>
               <input type="text" placeholder="First Name" required />
               <input type="text" placeholder="Last Name" required />
@@ -70,7 +70,7 @@ const RegisterLogin = () => {
               </button>
             </form>
             <p>
-              Already have an account?{" "}
+              Already Legendary?{" "}
               <span onClick={toggleForm} className="toggle-link">
                 Log In
               </span>
@@ -80,7 +80,7 @@ const RegisterLogin = () => {
           <div>
             <h1>LOGIN</h1>
             <hr width="100%"></hr>
-            <h2>Login you Legend!</h2>
+            <h2>Login, Legend!</h2>
             <form className="login-form" onSubmit={formSubmit}>
               <input type="text" placeholder="Username" required />
               <input type="password" placeholder="Password" required />
