@@ -9,6 +9,7 @@ export class Player {
   jumpSpeed = 7;
   score = 0
   onGround = false;
+  isDead = false
   paused = false; // Flag to indicate if the game is paused
   input = new THREE.Vector3();
   velocity = new THREE.Vector3();
@@ -67,8 +68,50 @@ export class Player {
     this.pausedText.style.display = 'none'; // Initially hidden
 
     containerRef.current.appendChild(this.pausedText);
+
+    // Create the "You Died" popup with additional "Click to Restart" message
+    this.youDiedText = document.createElement('div');
+    this.youDiedText.innerHTML = `
+        <div style="font-size: 48px; font-weight: bold; margin-bottom: 10px;">You Died</div>
+        <div style="font-size: 24px;">Click to Restart</div>
+    `;
+    this.youDiedText.style.position = 'absolute';
+    this.youDiedText.style.top = '50%';
+    this.youDiedText.style.left = '50%';
+    this.youDiedText.style.transform = 'translate(-50%, -50%)';
+    this.youDiedText.style.color = '#ffffff';
+    this.youDiedText.style.background = 'linear-gradient(to bottom, #ff0000, black)';
+    this.youDiedText.style.padding = '20px';
+    this.youDiedText.style.borderRadius = '10px';
+    this.youDiedText.style.display = 'none'; // Initially hidden
+    this.youDiedText.style.textAlign = 'center'; // Center align text
+
+    // Add hover effect
+    this.youDiedText.addEventListener('mouseover', () => {
+      this.youDiedText.style.boxShadow = '0px 0px 30px rgba(0, 0, 0, 1)'; 
+      this.youDiedText.style.color = '#000000';
+    });
+    
+    this.youDiedText.addEventListener('mouseout', () => {
+      this.youDiedText.style.boxShadow = 'none'; 
+      this.youDiedText.style.color = '#fff';
+    });
+
+    containerRef.current.appendChild(this.youDiedText);
+
+    
   }
 
+  disableControls() {
+    this.controlsEnabled = false; // Disable further controls
+    this.controls.unlock(); // Unlock the pointer to regain mouse control
+    this.input.set(0, 0, 0); // Reset any movement input
+    this.velocity.set(0, 0, 0); // Reset velocity
+
+    // Ensure the pause screen does not show on death
+    this.paused = false; 
+    this.pausedText.style.display = 'none'; // Ensure pause text is hidden
+  }
 
 
   get worldVelocity() {
@@ -79,6 +122,8 @@ export class Player {
   
 
   pauseGame() {
+    if (!this.controlsEnabled) return; // Do not pause if controls are disabled (e.g., game over)
+
     this.paused = true; 
     this.velocity.set(0, 0, 0); 
     console.log("Game Paused");
@@ -125,32 +170,34 @@ export class Player {
 
   onKeyDown(event) {
     if (!this.controls.isLocked && this.controlsEnabled) { // Lock only if controls are enabled
-      this.controls.lock();
+        this.controls.lock();
     }
 
     if (this.paused) return; // Ignore inputs while paused
 
+    if (!this.controlsEnabled) return; // Ignore inputs if controls are disabled (game over)
+
     switch(event.code) {
-      case 'KeyW':
-        this.input.z = this.maxSpeed;
-        break;
-      case 'KeyA':
-        this.input.x = -this.maxSpeed;
-        break;
-      case 'KeyS':
-        this.input.z = -this.maxSpeed;
-        break;
-      case 'KeyD':
-        this.input.x = this.maxSpeed;
-        break;
-      case 'KeyR':
-        this.position.set(13, 2.01, 11);
-        this.velocity.set(0, 0, 0)
-        break;
-      case 'Space':
-        if (this.onGround) {
-          this.velocity.y += this.jumpSpeed
-        }
+        case 'KeyW':
+            this.input.z = this.maxSpeed;
+            break;
+        case 'KeyA':
+            this.input.x = -this.maxSpeed;
+            break;
+        case 'KeyS':
+            this.input.z = -this.maxSpeed;
+            break;
+        case 'KeyD':
+            this.input.x = this.maxSpeed;
+            break;
+        case 'KeyR':
+            this.position.set(13, 2.01, 11);
+            this.velocity.set(0, 0, 0);
+            break;
+        case 'Space':
+            if (this.onGround) {
+                this.velocity.y += this.jumpSpeed;
+            }
     }
   }
   
