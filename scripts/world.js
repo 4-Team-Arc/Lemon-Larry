@@ -2,16 +2,29 @@ import * as THREE from 'three';
 import { blocks } from './blocks';
 
 const geometry = new THREE.BoxGeometry();
-const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16); 
+const sphereGeometry = new THREE.SphereGeometry(0.1, 8, 8); 
 
-const wallMaterial = new THREE.MeshLambertMaterial({color: 0x302f30});
-const floorMaterial = new THREE.MeshLambertMaterial({color: 0x080000});
-const lemonMaterial = new THREE.MeshStandardMaterial({
+const textureLoader = new THREE.TextureLoader();
+const wallTexture = textureLoader.load('../images/metal_wall.jpg');
+const floorTexture = textureLoader.load('../images/metal_floor.jpg');
+const lemonTexture = textureLoader.load('../images/lemon.jpg');
+
+
+const wallMaterial = new THREE.MeshLambertMaterial({
+  color: 0x302f30, 
+  reflectivity: 0, 
+  specular: 0x111111,
+  map: wallTexture
+});
+const floorMaterial = new THREE.MeshLambertMaterial({
+  color: 0x523c2c,
+  map: floorTexture,
+});
+const lemonMaterial = new THREE.MeshLambertMaterial({
 
   color: 0xFFFF00, 
-  bumpScale: 0.7,
-  roughness: 0.99, 
-  metalness: 0.0  
+  map: lemonTexture,
+  reflectivity: 0
 }); 
 
 

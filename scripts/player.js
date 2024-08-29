@@ -69,11 +69,14 @@ export class Player {
     containerRef.current.appendChild(this.pausedText);
   }
 
+
+
   get worldVelocity() {
     this.#worldVelocity.copy(this.velocity);
     this.#worldVelocity.applyEuler(new THREE.Euler(0, this.camera.rotation.y, 0));
     return this.#worldVelocity;
   }
+  
 
   pauseGame() {
     this.paused = true; 

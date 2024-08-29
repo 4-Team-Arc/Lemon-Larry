@@ -254,7 +254,22 @@ const GameScene = () => {
   // Axis Helper
   // The X axis is red. The Y axis is green. The Z axis is blue.
   const axesHelper = new THREE.AxesHelper( 500 );
-  scene.add( axesHelper );
+  // scene.add( axesHelper );
+
+  const listener = new THREE.AudioListener();
+  scene.add(listener);
+  // Create a global audio source and attach it to the listener
+  const sound = new THREE.Audio(listener);
+
+    // Load a sound and set it as the Audio object's buffer
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load('../Ambience.mp3', function(buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true); // Loop the sound
+    sound.setVolume(0.5); // Set the volume
+    sound.play(); // Play the sound
+});
+
 
   // Light setup
   const setupLights = () => {
@@ -267,8 +282,8 @@ const GameScene = () => {
     // scene.add(sun);
 
     const ambient = new THREE.AmbientLight(0x404040); // Soft ambient light
-    ambient.intensity = 60; // Adjust this to make the scene brighter or dimmer
-    // scene.add(ambient);
+    ambient.intensity = .5; // Adjust this to make the scene brighter or dimmer
+    scene.add(ambient);
 
     // Optional: Helper to visualize the light
     const lightHelper = new THREE.PointLightHelper(sun, 1);
@@ -327,6 +342,12 @@ const animate = () => {
 
   return () => {
     window.removeEventListener('resize', handleResize);
+
+    // Stop the sound if it's playing
+    if (sound.isPlaying) {
+      sound.stop();
+    } 
+
     if (containerRef.current) {
       containerRef.current.removeChild(renderer.domElement);
     }
