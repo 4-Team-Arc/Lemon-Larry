@@ -4,11 +4,18 @@ const prisma = require('./client.cjs');
 const createUser = async(email, username, password) =>{
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const resultofSearch = await prisma.user.findUnique({
-      where: {username, email} // ==> null
+
+    const existingUser = await prisma.user.findUnique({
+      where: {username:username}
     })
-    if(badCredentials){
-      res.status(409).json({message: 'Invalid login credentials'})
+    const existingEmail = await prisma.user.findUnique({
+      where: {email: email}
+    })
+    if(existingUser){
+      res.status(409).json({message: 'Username is already in use'})
+    }
+    if(existingEmail){
+      res.status(409).json({message: 'Email is already in use'})
     }
     const newUser = await prisma.user.create({
       data: {
@@ -17,9 +24,6 @@ const createUser = async(email, username, password) =>{
         password: hashedPassword
       }
     });
-
-
-
     return newUser
   } catch(error) {
     console.log(`Error creating user: `, error);
