@@ -37,7 +37,7 @@ const RegisterLogin = () => {
           password: formData.password
         });
         setIsRegister(false); // Switch to login form after successful registration
-        
+
       } catch (error) {
         setError(error.response.data.message || "Registration failed");
       }
@@ -48,8 +48,9 @@ const RegisterLogin = () => {
           username: formData.username,
           password: formData.password
         });
-        alert(response.data.message);
+        // alert(response.data.message);
         localStorage.setItem("token", response.data.token);
+        window.location.href = "/"
       } catch (error) {
         setError(error.response.data.message || "Login failed");
       }
