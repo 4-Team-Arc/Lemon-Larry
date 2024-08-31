@@ -12,10 +12,10 @@ const createUser = async(email, username, password) =>{
       where: {email: email}
     })
     if(existingUser){
-      res.status(409).json({message: 'Username is already in use'})
+      throw new Error('Username is already in use')
     }
     if(existingEmail){
-      res.status(409).json({message: 'Email is already in use'})
+      throw new Error('Email is already in use')
     }
     const newUser = await prisma.user.create({
       data: {

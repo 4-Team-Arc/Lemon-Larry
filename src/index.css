@@ -103,7 +103,7 @@ a{
 }
 
 .login-button,
-.register-button {
+.register-button, .logout-button {
   background-color: red;
   color: white;
   padding: 10px;
@@ -114,7 +114,8 @@ a{
 }
 
 .login-button:hover,
-.register-button:hover {
+.register-button:hover,
+.logout-button:hover {
   background-color: antiquewhite;
   color:red;
 }
@@ -134,5 +135,27 @@ a{
 }
 
 p{
+  color:white;
+}
+
+.welcome-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top:3vh;
+  text-align: center;
+}
+
+.welcome-content {
+  width: 400px;
+  background-image: linear-gradient( red, black);
+  border-radius: 8px;
+  box-shadow: 3vh 3vh 4vh rgba(255, 255, 255, 0.484);
+  padding: 20px;
+  text-align: center;
+  margin-top: 3vh;
+}
+
+h3{
   color:white;
 }
