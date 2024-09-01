@@ -21,7 +21,7 @@ const floorMaterial = new THREE.MeshLambertMaterial({
 });
 const lemonMaterial = new THREE.MeshLambertMaterial({
 
-  color: 0xFFFF00, 
+  color: 0x666318, 
   map: lemonTexture,
   reflectivity: 0
 }); 
@@ -56,7 +56,7 @@ export class World extends THREE.Group {
     this.lemonSound = new THREE.Audio(this.listener);
     this.audioLoader.load('../coinSound.mp3', (buffer) => {
         this.lemonSound.setBuffer(buffer);
-        this.lemonSound.setVolume(0.7);  // Adjust the volume
+        this.lemonSound.setVolume(0.4);  // Adjust the volume
     });
   }
 

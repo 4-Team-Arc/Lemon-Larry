@@ -251,7 +251,7 @@ export class Physics {
     const audioLoader = new THREE.AudioLoader();
     audioLoader.load('../deep-evil-laugh.mp3', function(buffer) {
         deathSound.setBuffer(buffer);
-        deathSound.setVolume(0.8);
+        deathSound.setVolume(0.99);
         deathSound.play();
     });
 

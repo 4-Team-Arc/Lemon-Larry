@@ -15,7 +15,7 @@ export class Player {
   velocity = new THREE.Vector3();
   #worldVelocity = new THREE.Vector3();
 
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 50);
   controls = new PointerLockControls(this.camera, document.body)
   controlsEnabled = false; // Flag to check if controls are enabled
   
@@ -30,8 +30,8 @@ export class Player {
     this.camera.add(this.flashlight.target);
 
     scene.add(this.camera); 
-    this.position.set(13, 2.2, 11);
-    this.camera.lookAt(13, 2.01, 25)
+    this.position.set(13, 2.2, 11); // (13, 2.2, 11)
+    this.camera.lookAt(13, 2.01, 25) // (13, 2.01, 25)
     scene.add(this.camera);
     // scene.add(this.cameraHelper);
 
@@ -55,13 +55,17 @@ export class Player {
 
     // Create the paused text element
     this.pausedText = document.createElement('div');
-    this.pausedText.textContent = 'Paused';
+    this.pausedText.innerHTML = `
+      <div style="font-size: 64px; margin-bottom: 20px;">Paused</div>
+      <div style="font-size: 24px; color: white">Press Any Key to Resume</div>
+    `;
     this.pausedText.style.position = 'absolute';
     this.pausedText.style.top = '50%';
     this.pausedText.style.left = '50%';
     this.pausedText.style.transform = 'translate(-50%, -50%)';
-    this.pausedText.style.color = '#ffffff';
-    this.pausedText.style.fontSize = '48px';
+    this.pausedText.style.color = 'black';
+    this.pausedText.style.fontWeight = 'bold'
+    this.pausedText.style.textAlign = 'center';
     this.pausedText.style.background = 'linear-gradient(to bottom, #ff0000, black)';
     this.pausedText.style.padding = '20px';
     this.pausedText.style.borderRadius = '10px';
@@ -98,6 +102,9 @@ export class Player {
     });
 
     containerRef.current.appendChild(this.youDiedText);
+
+    // Gray fog, starting at 1 units and fully obscuring at 7 units
+    scene.fog = new THREE.Fog(0x000000, 1, 7); 
 
     
   }
