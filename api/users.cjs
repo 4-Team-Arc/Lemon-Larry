@@ -1,11 +1,13 @@
 const express = require('express');
 const prisma = require('../DB/client.cjs');
 const bcrypt = require('bcrypt');
-const { registerUser } = require('./auth.cjs')
+const { registerUser, loginUser } = require('./auth.cjs')
 
 const usersRouter = express.Router();
 
 usersRouter.post('/', registerUser);
+
+usersRouter.post('/Login', loginUser);
 
 usersRouter.get('/', async (req, res) => {
   try {
@@ -32,6 +34,7 @@ usersRouter.get('/:id', async (req, res) => {
     res.status(500).json({ message: 'Failed to retrieve user' });
   }
 });
+
 
 usersRouter.put('/:id', async (req, res) => {
   const { id } = req.params;

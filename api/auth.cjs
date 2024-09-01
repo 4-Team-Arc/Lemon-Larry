@@ -8,8 +8,9 @@ const secretKey = process.env.JWT_SECRET_KEY;
 const registerUser = async(req, res) => {
   const {email, username, password } = req.body;
   try{
-    const newUser = await createUser(email, username, password);
-    res.status(201).json({
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await createUser(email, username, hashedPassword);
+    res.status(200).json({
       message: `User: ${newUser.username} Registered Successfully!`,
       user: newUser
     })
@@ -32,7 +33,6 @@ const loginUser = async (req,res) => {
         message:'Invalid Username'
       });
     }
-
     const validPassword = await bcrypt.compare(password, user.password);
     if(!validPassword) {
       return res.status(401).json({
@@ -41,7 +41,7 @@ const loginUser = async (req,res) => {
     }
 
     const token = jwt.sign({userId: user.id}, secretKey, {expiresIn: '4h'})
-    res.status(201).json({message: `You are now logged in as ${user.username}`, token})
+    res.status(200).json({message: `You are now logged in as ${user.username}`, token})
   } catch(error) {
     console.log('Error while loggin in: ', error)
     res.status(500).json({message: 'Login Failed'});
