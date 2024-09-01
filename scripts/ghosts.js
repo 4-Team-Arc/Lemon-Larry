@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { AStarFinder } from 'pathfinding';
 import PF from 'pathfinding';
 
+const textureLoader = new THREE.TextureLoader();
+const lemonTexture = textureLoader.load('../images/lemon.jpg');
+
 export class Ghost {
     constructor(scene, maze, player, x, z) {
         this.scene = scene;
@@ -11,8 +14,8 @@ export class Ghost {
         this.targetPosition = null; // The next grid position the ghost is moving towards
 
         // Setup the ghost's visual representation as a red sphere
-        const geometry = new THREE.SphereGeometry(0.3, 16, 16); 
-        const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const geometry = new THREE.SphereGeometry(0.3, 6, 6); 
+        const material = new THREE.MeshLambertMaterial({ color: 0x666318, map: lemonTexture, reflectivity: 0 });
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.set(x, 2, z);
         scene.add(this.mesh);
