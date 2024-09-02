@@ -200,7 +200,7 @@ div.msgbutton{
   
 }
 
-h2{
+#cboxh2{
   font-family:lemon;
   width: 100px;
   height: 100px;
@@ -273,6 +273,17 @@ background-color: bisque;
 
 }
 
+#about-p{
+  font-size: large;
+}
+
+.anijaImage{
+ padding-left: 60vh;
+}
+
+#aboutUsH3{
+  padding-left: 60vh;
+}
 
 @font-face {
   font-family:lemon ;

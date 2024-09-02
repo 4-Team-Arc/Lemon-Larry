@@ -38,7 +38,7 @@ const Leaderboard = () => {
   </div>
   <div className="msgbox">
 
-  <h2>Message:</h2>
+  <h2 id="cboxh2">Message:</h2>
 
   
     <div className="msg">
