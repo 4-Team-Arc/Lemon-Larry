@@ -2,10 +2,19 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const usersRouter = require('./api/users.cjs');
+const mime = require('mime-types');
 
 const app = express();
 
 app.use(express.static(path.join(__dirname,'dist')));
+
+app.use((req, res, next) => {
+  const type = mime.lookup(req.path);
+  if (type) {
+    res.setHeader('Content-Type', type);
+  }
+  next();
+});
 
 app.use(express.json());
 

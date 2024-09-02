@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { blocks } from './blocks';
+import evilLaugh from '../sounds/deep-evil-laugh.mp3'
 
 const collisionMaterial = new THREE.MeshBasicMaterial({
   color: 0xff0000,
@@ -249,7 +250,7 @@ export class Physics {
     const deathSound = new THREE.Audio(world.listener); // Attach the sound to the world's listener
 
     const audioLoader = new THREE.AudioLoader();
-    audioLoader.load('../deep-evil-laugh.mp3', function(buffer) {
+    audioLoader.load(evilLaugh, function(buffer) {
         deathSound.setBuffer(buffer);
         deathSound.setVolume(0.99);
         deathSound.play();
