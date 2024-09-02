@@ -186,26 +186,28 @@ if (!renderer.getContext()) {
   maze4: []
   };
 
-  // const pickMaze = () => {
-  //   const mazeNum = Math.floor(Math.random() * 4);
-  //   const mazeKey = `maze${mazeNum}`;
-  //   const selectedMaze = mazes[mazeKey];
-  //   console.log(`Selected maze: ${mazeKey}`, selectedMaze);
-  //   return selectedMaze;
-  // };
-
+  
+  const pickMaze = () => {
+    const mazeNum = Math.floor(Math.random() * 4);
+    const mazeKey = `maze${mazeNum}`;
+    const selectedMaze = mazes[mazeKey];
+    console.log(`Selected maze: ${mazeKey}`, selectedMaze);
+    return selectedMaze;
+  };
+  const randomMaze = pickMaze()
+  
   //Scene setup
   const scene = new THREE.Scene();;
-  const world = new World({ width: 30, wallHeight: 3 }, mazes.maze0, listener);
+  const world = new World({ width: 30, wallHeight: 3 },randomMaze, listener);
   world.generateBlocks();
   world.generateMeshes();
   scene.add(world);
 
   const player = new Player(scene, containerRef);
-  const ghost = new Ghost(scene, mazes.maze0, player, 1, 1);
-  const ghost1 = new Ghost(scene, mazes.maze0, player, 28, 1);
-  const ghost2 = new Ghost(scene, mazes.maze0, player, 1, 28);
-  const ghost3 = new Ghost(scene, mazes.maze0, player, 28, 28);
+  const ghost = new Ghost(scene,randomMaze, player, 1, 1);
+  const ghost1 = new Ghost(scene,randomMaze, player, 28, 1);
+  const ghost2 = new Ghost(scene,randomMaze, player, 1, 28);
+  const ghost3 = new Ghost(scene,randomMaze, player, 28, 28);
   let ghosts = [ghost, ghost1, ghost2, ghost3]
   
   const physics = new Physics(scene, ghosts, world)
@@ -215,6 +217,7 @@ if (!renderer.getContext()) {
   controlsDiv.innerHTML = `
     <h1>Controls</h1>    
       <p>W-A-S-D: Move</p>
+      <p>Space: Jump</p>
       <p>Mouse: Adjust Camera</p>
       <p>Escape: Pause Game</p>  
   `;
