@@ -3,7 +3,7 @@ import RegisterLogin from "./components/loginPage.jsx"
 import AboutUsPage from "./components/about-us.jsx"
 import { Routes,Route } from "react-router-dom";
 import GameScene from '../scripts/game.jsx';
-import Leaderboard from "./components/leaderboard.jsx";
+import Chat from "./components/Chat.jsx";
 
 const App = () => {
 
@@ -15,7 +15,7 @@ const App = () => {
             <Route exact path="/Login" element={<RegisterLogin/>}></Route>
             <Route exact path="/Play" element={<GameScene />}></Route>
             <Route exact path="/About-Us" element={<AboutUsPage/>}></Route>
-            <Route exact path="/Leaderboard" element={<Leaderboard/>}></Route>
+            <Route exact path="/Chat" element={<Chat/>}></Route>
           </Routes>
     </>
   )
