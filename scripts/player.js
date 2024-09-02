@@ -104,7 +104,7 @@ export class Player {
     containerRef.current.appendChild(this.youDiedText);
 
     // Gray fog, starting at 1 units and fully obscuring at 7 units
-    scene.fog = new THREE.Fog(0x000000, 1, 7); 
+    // scene.fog = new THREE.Fog(0x000000, 1, 7); 
 
     
   }

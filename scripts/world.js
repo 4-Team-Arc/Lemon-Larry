@@ -1,13 +1,19 @@
 import * as THREE from 'three';
 import { blocks } from './blocks';
 
+import wallImage from '../images/metal_wall.jpg';
+import floorImage from '../images/metal_floor.jpg';
+import lemonImage from '../images/lemon.jpg';
+
+import coinSound from '../sounds/coinSound.mp3'
+
 const geometry = new THREE.BoxGeometry();
 const sphereGeometry = new THREE.SphereGeometry(0.1, 8, 8); 
 
 const textureLoader = new THREE.TextureLoader();
-const wallTexture = textureLoader.load('../images/metal_wall.jpg');
-const floorTexture = textureLoader.load('../images/metal_floor.jpg');
-const lemonTexture = textureLoader.load('../images/lemon.jpg');
+const wallTexture = textureLoader.load(wallImage);
+const floorTexture = textureLoader.load(floorImage);
+const lemonTexture = textureLoader.load(lemonImage);
 
 
 const wallMaterial = new THREE.MeshLambertMaterial({
@@ -54,7 +60,7 @@ export class World extends THREE.Group {
 
     // Load the lemon collection sound
     this.lemonSound = new THREE.Audio(this.listener);
-    this.audioLoader.load('../coinSound.mp3', (buffer) => {
+    this.audioLoader.load(coinSound, (buffer) => {
         this.lemonSound.setBuffer(buffer);
         this.lemonSound.setVolume(0.4);  // Adjust the volume
     });

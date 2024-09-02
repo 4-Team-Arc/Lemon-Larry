@@ -7,6 +7,7 @@ import { Player } from './player'
 import { Physics } from './physics';
 import { useEffect, useRef } from 'react';
 import { Ghost } from './ghosts';
+import backgroundMusic from '../sounds/Ambience.mp3';
 
 const GameScene = () => {
 
@@ -23,6 +24,13 @@ const GameScene = () => {
 
   // Renderer Setup
   const renderer = new THREE.WebGLRenderer();
+
+  // Check if the WebGL context was successfully created
+if (!renderer.getContext()) {
+  console.error("WebGL not supported or could not initialize WebGL context.");
+}
+
+
   renderer.setPixelRatio(window.devicePixelRatio);
   // renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x000000);
@@ -302,7 +310,7 @@ startButton.addEventListener('mouseout', () => {
 
   // Load a backgroundSound and set it as the Audio object's buffer
   const audioLoader = new THREE.AudioLoader();
-  audioLoader.load('../Ambience.mp3', function(buffer) {
+  audioLoader.load(backgroundMusic, function(buffer) {
   backgroundSound.setBuffer(buffer);
   backgroundSound.setLoop(true); // Loop the backgroundSound
   backgroundSound.setVolume(0.5); // Set the volume
@@ -322,7 +330,7 @@ startButton.addEventListener('mouseout', () => {
     // scene.add(sun);
 
     const ambient = new THREE.AmbientLight(0x404040); // Soft ambient light
-    ambient.intensity = .5; // Adjust this to make the scene brighter or dimmer
+    ambient.intensity = 50; // Adjust this to make the scene brighter or dimmer
     // scene.add(ambient);
 
     // Optional: Helper to visualize the light

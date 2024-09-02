@@ -2,8 +2,10 @@ import * as THREE from 'three';
 import { AStarFinder } from 'pathfinding';
 import PF from 'pathfinding';
 
+import lemonImage from '../images/lemon.jpg'
+
 const textureLoader = new THREE.TextureLoader();
-const lemonTexture = textureLoader.load('../images/lemon.jpg');
+const lemonTexture = textureLoader.load(lemonImage);
 
 export class Ghost {
     constructor(scene, maze, player, x, z) {
