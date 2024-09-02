@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  
+  align-items:center;
 }
 
 body, html {
@@ -20,8 +20,8 @@ h1{
 
 .navbar{
   width: 100%;
-  height: 100px;
-  font-size: 22px;
+  height: 10vh;
+  font-size: 2vh;
   align-items: center;
   display:flex;
   justify-content: space-evenly;
@@ -29,7 +29,6 @@ h1{
   border-radius: 25px;
   box-sizing: border-box;
   background-image: linear-gradient(to bottom, red, black);
-  
 }
 
 a{
@@ -38,20 +37,14 @@ a{
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-a:hover{
+.navbar > a:hover{
   text-shadow: 7px -7px 3px rgba(255, 255, 255, 1);
   color:black;
 }
 
-a:hover + .navbar {
-  opacity: 0.5;
-}
-
-.loginForm{
-  height: 400px;
-  width: 500px;
+.loginForm {
+ height: 50vh;
   display: flex;
-  flex-direction: column;
 }
 
 .login{
@@ -61,47 +54,110 @@ a:hover + .navbar {
   justify-items: center;
 }
 
-.navbar{
-  width: 100%;
-  height: 100px;
-  font-size: 22px;
-  align-items: center;
-  display:flex;
-  justify-content: space-evenly;
-  border: solid thin red;
-  border-radius: 25px;
-  box-sizing: border-box;
-  background-image: linear-gradient(to bottom, red, black);
-  
-}
 
-a{
-  color: white;
-  text-decoration: none;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-a:hover{
+.navbar > a:hover{
   text-shadow: 7px -7px 3px rgba(255, 255, 255, 1);
   color:black;
 }
 
-a:hover + .navbar {
+/* a:hover + .navbar {
   opacity: 0.5;
+} */
+
+.container {
+  width: 400px;
+  background-image: linear-gradient( red, black);
+  border-radius: 8px;
+  box-shadow: 3vh 3vh 4vh rgba(255, 255, 255, 0.484);
+  padding: 20px;
+  text-align: center;
+  margin-top: 3vh;
 }
 
-.loginForm{
-  height: 400px;
-  width: 500px;
+.login-section h1 {
+  color: white;
+  text-shadow: 9px -7px 5px rgba(0, 0, 0, 0.63);
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.login-section h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.login-form,
+.register-form {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
-.login{
+.login-form input,
+.register-form input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: antiquewhite;
+}
+
+.login-button,
+.register-button, .logout-button {
+  background-color: red;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-button:hover,
+.register-button:hover,
+.logout-button:hover {
+  background-color: antiquewhite;
+  color:red;
+}
+
+.forgot-password,
+.toggle-link {
+  color: red;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.forgot-password:hover,
+.toggle-link:hover {
+  text-shadow:  2vh -1vh 4px rgb(255, 0, 0);
+  color:white;
+}
+
+p{
+  color:white;
+}
+
+.welcome-container{
   display: flex;
-  width: 100%;
-  height: 100%;
-  justify-items: center;
+  flex-direction: column;
+  justify-content: center;
+  margin-top:3vh;
+  text-align: center;
+}
+
+.welcome-content {
+  width: 400px;
+  background-image: linear-gradient( red, black);
+  border-radius: 8px;
+  box-shadow: 3vh 3vh 4vh rgba(255, 255, 255, 0.484);
+  padding: 20px;
+  text-align: center;
+  margin-top: 3vh;
+}
+
+h3{
+  color:white;
 }
 
 div.cbox{
