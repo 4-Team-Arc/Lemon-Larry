@@ -28,30 +28,21 @@ const Leaderboard = () => {
 
   return(
   <section>
-    <div className="cbox">
-
-  <div className="msgbutton">
- 
-  
-  <input value={ message }placeholder="Message..." onChange={(event) => {setMessage(event.target.value)}}/>
-  <button onClick={sendMessage}>Send Message</button>
-  </div>
-  <div className="msgbox">
-
-  <h2>Message:</h2>
-
-  
-    <div className="msg">
-  {messageReceived.map((msg, index) => (
-    <div key={index}>{msg}</div>
-  ))}
-  </div>
-
-
-
-    </div>
- </div>
-     </section>
+      <div className="msgbox">
+        <h2 id='MessagesTitle'>Messages</h2>  
+          <div className="allMessages">
+            <ul className="theList">
+            {messageReceived.map((msg, index) => (
+              <li className='singleMsg' key={index}>{`UserName Here: ${msg}`}</li>
+            ))}
+            </ul>
+          </div>
+      </div>
+      <div className="msgbutton">  
+        <input id='msgInput' value={ message } placeholder="Message..." onChange={(event) => {setMessage(event.target.value)}}/>
+        <button onClick={sendMessage}>Send Message</button>
+      </div>
+  </section>
 
    
 
