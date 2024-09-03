@@ -33,15 +33,17 @@ const loginUser = async (req,res) => {
         message:'Invalid Username'
       });
     }
-    const validPassword = await bcrypt.compare(password, user.password);
-    if(!validPassword) {
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if(!passwordMatch) {
       return res.status(401).json({
-        message: 'Invalid Password'
+        message: `Invalid Password, correct password is ${user.password}`
       })
     }
-
-    const token = jwt.sign({userId: user.id}, secretKey, {expiresIn: '4h'})
-    res.status(200).json({message: `You are now logged in as ${user.username}`, token})
+    if(user && passwordMatch){
+      const token = jwt.sign({userId: user.id}, secretKey, {expiresIn: '4h'})
+      res.status(200).json({message: `You are now logged in as ${user.username}`, token})
+    }
   } catch(error) {
     console.log('Error while loggin in: ', error)
     res.status(500).json({message: 'Login Failed'});
