@@ -54,7 +54,6 @@ a{
   justify-items: center;
 }
 
-
 .navbar > a:hover{
   text-shadow: 7px -7px 3px rgba(255, 255, 255, 1);
   color:black;
@@ -160,33 +159,45 @@ h3{
   color:white;
 }
 
-div.cbox{
-  display: flex;
- 
+/* div.cbox{
+  display: flex; 
   padding-top: 40vh;
   color: red;
+} */
 
+.allMessages { 
+  box-sizing: border-box;
+  max-width: 80vw; /* Ensure the message container doesn't exceed this width */
+  margin: 10px auto; /* Center the message container with some spacing */
+  padding: 10px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  list-style-type: none; /* Remove default bullet points from list */
+  padding: 0; /* Remove default padding from ul */
 }
 
-
-div.msg{
- 
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  top: 9vh;
-  bottom: 0;
-  left: 0;
-  right: 0; 
-  margin:auto;
-  color: red;
-  font-size: 1.2VH;
- 
-  
+.theList {
+  box-sizing: border-box;
+  padding: 5px;
+  width: 100%;
 }
+
+.singleMsg {
+  box-sizing: border-box;
+  display: block; /* Border only around the content */
+  width: fit-content;
+  max-width: 100%; /* Allow it to take full width of its container if needed */
+  border: solid 1px gray;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 5px;
+  word-wrap: break-word; /* Ensure long words are broken and wrapped */
+  overflow-wrap: break-word; /* Ensure text wraps within the container */
+}
+
 
 div.msgbutton{
-
   display:flex;
   width: 100px;
   height: 50px;
@@ -195,38 +206,32 @@ div.msgbutton{
   top: 90vh;
   right: 7vh;
   left: 0;
-  bottom: ;
-  color:red;
-  
+  bottom: 0;
+  color:red;  
 }
 
-#cboxh2{
+#MessagesTitle{
   font-family:lemon;
   width: 100px;
   height: 100px;
-  position: absolute;
+  position: relative;
   top: 3vh;
   bottom: 0;
   left: 0;
   right: 0;
   margin:auto;
-  color: red;
-    
+  color: red;   
 }
 
-button{
-  
+button{  
   color: rgb(0, 0, 0);
   background-color: bisque;
   border: solid, red;
   border-radius: 10px;
-  font-size: medium;
-  
-  
+  font-size: medium;  
 }
 
-button:hover{
-  
+button:hover{  
   color: rgb(0, 0, 0);
   background-color: rgb(255, 0, 0);
   border: solid, red;
@@ -237,8 +242,7 @@ button:hover{
   box-shadow: 1px 1px 10px 5px rgba(251, 0, 0, 0.934);
 }
 
-button:active{
-  
+button:active{  
   color: rgb(0, 0, 0);
   background-color: bisque;
   border: solid, red;
@@ -247,31 +251,37 @@ button:active{
   right: 10vh;
 }
 
-
-
-input{
+#msgInput{
   background-color: rgb(239, 225, 208);
   border-radius: 10px;
-
-  border: solid, red;
- 
- 
+  border: solid, red; 
+  margin-right: 5px;
 }
 
-
-
-section{
-
-border: solid,10px, red;
-display: flex;
-margin-top: 39vh;
-margin-left: 10vh;
-margin-right: 6vh;
-margin-bottom: 0vh;
-border-radius: 3vh;
-background-color: bisque;
-
+section {
+  border: solid 1px red;
+  display: flex;
+  flex-direction: column; /* Stack messages vertically */
+  width: 90%;
+  margin-top: 39vh;
+  margin-left: 10vh;
+  margin-right: 6vh;
+  margin-bottom: 0vh;
+  border-radius: 3vh;
+  background-color: bisque;
+  overflow: auto; /* Add scroll if messages exceed section height */
 }
+
+@font-face {
+  font-family:lemon ;
+  src: url(/src/fonts/lemonade.ttf);
+}
+
+@font-face {
+  font-family:cossines ;
+  src: url(/src/fonts/Cossines-Regular.otf);
+}
+
 
 #about-p{
   font-size: large;
@@ -283,14 +293,4 @@ background-color: bisque;
 
 #aboutUsH3{
   padding-left: 60vh;
-}
-
-@font-face {
-  font-family:lemon ;
-  src: url(/src/fonts/lemonade.ttf);
-}
-
-@font-face {
-  font-family:cossines ;
-  src: url(/src/fonts/Cossines-Regular.otf);
 }
