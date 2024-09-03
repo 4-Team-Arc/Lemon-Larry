@@ -1,11 +1,15 @@
-
-
 const express = require('express');
-
+const http = require('http');
+const {Server} = require('socket.io');
 const app = express();
 
-const server = require ('http').createServer(app);
-const io = require('socket.io')(server);
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors:{
+    origin: "http://localhost:3000",
+    methods:["GET", "POST"]
+  }
+});
 
 io.on('connection', (socket) => {
   console.log('CONNECTED TO THE WEB SOCKET');
@@ -17,12 +21,15 @@ io.on('connection', (socket) => {
 
   })
 
+  socket.on('disconnet', ()=>{
+    console.log('User disconnected', socket.id)
+  })
 });
 
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
   res.sendFile (__dirname + '/index.html')
- 
+
 });
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 server.listen(PORT, () => console.log(`LISTENING ON ${PORT}`));

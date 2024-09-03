@@ -26,7 +26,7 @@ const Chat = () => {
 
   const sendMessage = () => {
     if (message.trim() !== "" && {username, message}) {
-      socket.emit("send_message",{ username, message });
+      socket.emit("new message sent",{ username, message });
       setMessageReceived((prevMessage) => [...prevMessage, {username, message}]);
       setMessage("")
     }
@@ -34,12 +34,12 @@ const Chat = () => {
 
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setMessageReceived((prevMessage) => [...prevMessage, {username: data.username, messaage: data.message}]);
+    socket.on("new message relay", (data) => {
+      setMessageReceived((prevMessage) => [...prevMessage, {username: data.username, message: data.message}]);
     });
 
     return () => {
-      socket.off("receive_message");
+      socket.off("new message relay");
     }
   }, []);
 
@@ -69,16 +69,6 @@ const Chat = () => {
         <button onClick={sendMessage}>Send Message</button>
       </div>
   </section>
-
-
-
-
-
-
-
-
-
-
 );
 
 };
