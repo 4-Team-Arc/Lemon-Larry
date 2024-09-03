@@ -44,8 +44,8 @@ const Leaderboard = () => {
       </div>
   </section>
 
-   
 
+   
 
 
   

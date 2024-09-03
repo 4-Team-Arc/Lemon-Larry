@@ -281,3 +281,16 @@ section {
   font-family:cossines ;
   src: url(/src/fonts/Cossines-Regular.otf);
 }
+
+
+#about-p{
+  font-size: large;
+}
+
+.anijaImage{
+ padding-left: 60vh;
+}
+
+#aboutUsH3{
+  padding-left: 60vh;
+}
