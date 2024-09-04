@@ -37,10 +37,10 @@ const loginUser = async (req,res) => {
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log(`passwordsMath result:`, passwordMatch)
+
     if(!passwordMatch) {
       return res.status(401).json({
-        message: `Invalid Password, correct password is ${user.password}`
+        message: `Invalid Password`
       })
     }
     if(user && passwordMatch){

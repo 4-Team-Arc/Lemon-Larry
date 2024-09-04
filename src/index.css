@@ -289,15 +289,58 @@ div.msgbox{
   src: url(/src/fonts/Cossines-Regular.otf);
 }
 
-
-#about-p{
-  font-size: large;
+.about-us-container{
+  display: flex;
+  flex-direction: column;
+  margin: 3vh;
 }
 
-.anijaImage{
- padding-left: 60vh;
+#about-p{
+  font-size:1.9vh;
+  padding: 1vh;
+  margin: 0;
+  overflow: hidden;
+  max-height: 100%;
+}
+
+.profileImage {
+  width: 100%;
+  max-height: 99%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  padding: 1vw;
+  box-sizing: border-box;
 }
 
 #aboutUsH3{
-  padding-left: 60vh;
+  font-size: 1.5vh;
+  margin: 0;
+  padding: 0;
+  color: black
+}
+
+.picHolder {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  max-height: 19vh;
+  width: 25%;
+  overflow: hidden;
+  background-image: linear-gradient(red, black);
+  border-radius: 1vh;
+  margin: 1vh
+}
+.profile-container{
+  display:flex;
+  height:20vh;
+  box-sizing: border-box;
+  width:100%;
+  border: red solid thin;
+  border-radius: 1vh;
+  margin: 1vh;
+}
+
+.info-container{
+  width: 75%;
 }
