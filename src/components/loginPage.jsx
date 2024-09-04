@@ -50,8 +50,9 @@ const RegisterLogin = () => {
         password: formData.password
       });
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("username", formData.username);
       setAuthenticated(true); // Update authenticated state
-      window.location.href = "/"; // Redirect to homepage
+      window.location.href = "/Login"; // Redirect to homepage
     } catch (error) {
       setError(error.response.data.message || "Login failed");
     }

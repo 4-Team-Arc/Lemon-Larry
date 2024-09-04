@@ -22,7 +22,7 @@ const LoginForm = ({ formData, updateData, onSubmit, toggleForm, error }) => {
           required
         />
         <input
-          type="password"
+          // type="password"
           name="password"
           placeholder="Password"
           value={formData.password}
