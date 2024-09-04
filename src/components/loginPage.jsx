@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from 'axios';
-import LoginForm from './LoginForm';
+import LoginForm from './loginForm';
 import RegisterForm from './RegisterForm';
 import WelcomeMessage from './WelcomeMessage';
 

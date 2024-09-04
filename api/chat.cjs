@@ -10,7 +10,7 @@ const server = http.createServer();
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "http://localhost:8080",
     methods: ["GET", "POST"],
   },
 });
@@ -19,8 +19,8 @@ io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
   socket.on("send_message", (data) => {
-  
-   
+
+
   socket.broadcast.emit("receive_message", data)
 
     io.emit(data)
@@ -31,7 +31,3 @@ io.on("connection", (socket) => {
 server.listen(3001, () => {
   console.log(`YESSIRSKI`)
 });
-
-
-
- 

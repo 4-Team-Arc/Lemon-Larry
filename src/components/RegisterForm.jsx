@@ -30,7 +30,7 @@ const RegisterForm = ({ formData, updateData, onSubmit, toggleForm, error }) => 
           required
         />
         <input
-          // type="password"
+          type="password"
           name="password"
           placeholder="New Password"
           value={formData.password}
