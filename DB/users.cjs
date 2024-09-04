@@ -3,7 +3,7 @@ const prisma = require('./client.cjs');
 
 const createUser = async(email, username, password) =>{
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+
 
     const existingUser = await prisma.user.findUnique({
       where: {username:username}
@@ -21,7 +21,7 @@ const createUser = async(email, username, password) =>{
       data: {
         email: email,
         username: username,
-        password: hashedPassword
+        password: password
       }
     });
     return newUser
